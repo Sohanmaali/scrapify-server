@@ -9,11 +9,15 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { AdminLocalStrategy, CustomerLocalStrategy } from './local.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CustomerModule } from '../customer/customer.module';
+import { CustomerSchema } from '../customer/entities/customer.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Auth.name, schema: AuthSchema }]),
+    MongooseModule.forFeature([{ name: Auth.name, schema: AuthSchema },{ name: 'Customer', schema: CustomerSchema }]),
     forwardRef(() => AdminModule),
+    forwardRef(() => CustomerModule),
+
 
     PassportModule,
     JwtModule.registerAsync({

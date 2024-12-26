@@ -16,6 +16,9 @@ export class CmsHelper {
   }
 
   static async findByType(type, req, model) {
+
+    console.log("=============",req);
+    
     return model.findOne({ [type]: req.body[type] });
   }
 

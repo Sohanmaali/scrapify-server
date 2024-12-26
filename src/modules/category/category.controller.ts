@@ -4,7 +4,7 @@
 // export class CategoryController {}
 
 
-import { Controller, Get, Injectable, Post, Req, Res } from '@nestjs/common';
+import { Controller, Get, Injectable, Patch, Post, Req, Res } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import mongoose from 'mongoose';
 // import { Types } from 'mongoose';
@@ -34,6 +34,28 @@ export class CategoryController {
             });
         }
     }
+
+
+
+    @Patch("update/:id")
+    async update(@Req() req, @Res() res) {
+        try {
+            const query: any = { delete_at: null };
+            const data = await this.categoryService.update(req, query);
+
+            return res.status(201).json({
+                status: 'success',
+                data: data,
+            });
+        } catch (error) {
+            console.log('error  ', error);
+            return res.status(500).json({
+                status: 'error',
+                data: error.message,
+            });
+        }
+    }
+    
 
     @Get()
     async findType(@Req() req, @Res() res) {

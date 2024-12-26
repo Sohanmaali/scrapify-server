@@ -12,13 +12,15 @@ export class CustomerService {
     @InjectModel(Customer.name) private customerModel: Model<Customer>,
   ) {}
 
-  // async validateAdmin(email: string, password: string): Promise<any> {
-  //   const admin = await this.customerModel.findOne({ email }).exec();
-  //   if (admin && (await bcrypt.compare(password, admin.password))) {
-  //     return admin;
-  //   }
-  //   return null;
-  // }
+  async validateCustomer(email: string, password: string): Promise<any> {
+      const customer = await this.customerModel.findOne({ email }).exec();
+      if (customer && (await bcrypt.compare(password, customer.password))) {
+        return customer;
+      }
+      return null;
+  
+      
+    }
 
   async getAll(req, query?) {
     const pipeline = [
@@ -34,7 +36,10 @@ export class CustomerService {
   }
 
   async create(req) {
-    const data = await CmsHelper.create(req, this.customerModel);
+
+    console.log("-=-===-=-===req",req);
+    
+    const data = await this.customerModel.create(req);
     return data;
   }
 

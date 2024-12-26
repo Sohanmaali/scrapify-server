@@ -43,8 +43,8 @@ export class CategoryService {
         return await CmsHelper.findOne(req, this.categoryModel);
     }
 
-    async update(req) {
-        return `This action updates a #${"id"} region`;
+    async update(req, query?) {
+        return await CmsHelper.update(req, this.categoryModel);
     }
     async delete(req) {
         return `This action removes a #${"id"} region`;

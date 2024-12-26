@@ -16,6 +16,8 @@ export class Category extends Document {
   @Prop({ required: true, default: null })
   slug: string;
 
+  @Prop({ default: 0 })
+  price: number
 
   @Prop({ default: null })
   description: string;

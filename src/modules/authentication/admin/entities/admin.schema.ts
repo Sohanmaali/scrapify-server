@@ -3,11 +3,9 @@ import { Document } from 'mongoose';
 
 @Schema({ timestamps: true }) // Automatically manage createdAt and updatedAt
 export class Admin extends Document {
-  @Prop({ required: true }) // Making fields required
-  first_name: string;
 
   @Prop({ required: true })
-  last_name: string;
+  name: string;
 
   @Prop({ required: true, unique: true }) // Ensure unique email
   email: string;

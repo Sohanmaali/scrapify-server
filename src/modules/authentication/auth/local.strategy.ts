@@ -6,7 +6,7 @@ import { AdminService } from '../admin/admin.service';
 import { AuthService } from './auth.service';
 
 @Injectable()
-export class AdminLocalStrategy extends PassportStrategy(Strategy) {
+export class AdminLocalStrategy extends PassportStrategy(Strategy,"admin-local") {
   constructor(private authService: AuthService) {
     console.log('local strategy');
 
@@ -27,7 +27,7 @@ export class AdminLocalStrategy extends PassportStrategy(Strategy) {
 
 
 @Injectable()
-export class CustomerLocalStrategy extends PassportStrategy(Strategy) {
+export class CustomerLocalStrategy extends PassportStrategy(Strategy,"customer-local") {
   constructor(private authService: AuthService) {
     console.log('local strategy');
 
@@ -37,11 +37,11 @@ export class CustomerLocalStrategy extends PassportStrategy(Strategy) {
   async validate(email: string, password: string): Promise<any> {
     console.log('local strategy', email, password);
 
-    const admin = await this.authService.validateAdmin(email, password);
+    const customer = await this.authService.validateCustomer(email, password);
 
-    if (!admin) {
+    if (!customer) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    return admin;
+    return customer;
   }
 }

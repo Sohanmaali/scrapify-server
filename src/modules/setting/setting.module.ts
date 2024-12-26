@@ -6,7 +6,6 @@ import { SettingSchema } from './entities/setting.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
-
   imports: [
     MongooseModule.forFeature([{ name: 'Setting', schema: SettingSchema }]), // Registering the Admin model
   ],

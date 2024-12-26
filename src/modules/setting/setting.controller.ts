@@ -9,7 +9,6 @@ export class SettingController {
         private readonly settingService: SettingService
     ) { }
 
-
     @Post("/:id")
     async create(@Req() req, @Res() res) {
         try {

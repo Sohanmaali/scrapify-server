@@ -4,16 +4,22 @@ import { Document } from 'mongoose';
 @Schema({ timestamps: true }) // Automatically manage createdAt and updatedAt
 export class Customer extends Document {
   @Prop({ required: true }) // Making fields required
-  first_name: string;
-
-  @Prop({ required: true })
-  last_name: string;
+  name: string;
 
   @Prop() // Ensure unique email
   email: string;
 
   @Prop()
-  password: string; // Consider hashing this before saving
+  otpExpiry: Date;
+
+  @Prop()
+  otp: string;
+
+  @Prop({default: false})
+  isVerified: boolean;
+
+  @Prop()
+  password: string;
 
   @Prop()
   mobile: string;

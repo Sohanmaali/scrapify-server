@@ -53,6 +53,7 @@ import { SettingModule } from './modules/setting/setting.module';
 import { RegionModule } from './modules/region/region.module';
 import { CategoryModule } from './modules/category/category.module';
 import { StatusModule } from './modules/status/status.module';
+import { EcommerceModule } from './modules/ecommerce/ecommerce.module';
 
 @Module({
   imports: [
@@ -71,6 +72,7 @@ import { StatusModule } from './modules/status/status.module';
     RegionModule,
     CategoryModule,
     StatusModule,
+    EcommerceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
