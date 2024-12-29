@@ -1,49 +1,29 @@
-// scrap.controller.ts
 
-import { Body, Controller, Post, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Post, Req, Res, UseInterceptors } from '@nestjs/common';
 import { ScrapService } from './scrap.service';
-import * as Multer from 'multer';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ImageUploadHelper } from '../../../cms/helper/fileUploadHelper';
 
 @Controller('scrap')
-// @UseInterceptors(FileUploadInterceptor) // Use custom interceptor at class level
-export class ScrapController {
-  constructor(
-    private readonly scrapService: ScrapService,
-    // private readonly fileService: FileService, // Inject FileService
-  ) {}
+@UseInterceptors(
+  FileInterceptor('featured_image', { storage: ImageUploadHelper.storage }),
+  FilesInterceptor('gallery', 10, { storage: ImageUploadHelper.storage }) // Max 10 files
+)export class ScrapController {
+  constructor(private readonly scrapService: ScrapService) { 
+    console.log("scrap controller loaded");
+    
+  }
 
-  @Post()
-  @UseInterceptors(FileInterceptor('image', { storage: ImageUploadHelper.storage }))
-  async create(@Req() req, @Res() res, @UploadedFile() file: Express.Multer.File, @Body() data: any) {
- 
-//   async create(@Req() req, @Res() res, @UploadedFile() file: Express.Multer.File) {
+  @Post()  
+  async create(@Req() req, @Res() res,) {
     try {
-      if (!file) {
-        return res.status(400).json({
-          status: 'error',
-          message: 'No file uploaded',
-        });
-      }
 
 
-      // const data = await this.scrapService.create({
-      //   ...req.body,
-      //   filePath: file.path, // Optionally include the file path
-      // });
-
-        const relativePath = `uploads/${file.filename}`; // Path relative to the `public` folder
-
+      const data = await this.scrapService.create(req);
       return res.status(201).json({
         status: 'success',
         data: data,
-        file: {
-          originalName: file.originalname,
-          size: file.size,
-          mimeType: file.mimetype,
-          path: relativePath, // Return only the relative path
-        },
+
       });
     } catch (error) {
       console.error('Error:', error);

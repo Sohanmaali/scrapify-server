@@ -7,6 +7,8 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { CustomerService } from '../customer/customer.service';
+import { generateOtp } from '../../../cms/helper/commonhelper';
+import { ResponseHelper } from '../../../cms/helper/custom-exception.filter';
 
 // import { ChangePasswordDto } from '../admin/dto/change-password.dto';
 
@@ -32,7 +34,7 @@ export class AuthService {
   async validateCustomer(email: string, password: string): Promise<any> {
     const admin = await this.customerService.validateCustomer(email, password);
     if (!admin) {
-      throw new UnauthorizedException('Invalid credentials');
+      ResponseHelper.notFound('error', "404", "user not found");
     }
 
     return admin;
@@ -42,13 +44,14 @@ export class AuthService {
     const payload = {
       email: admin.email,
       _id: admin._id,
-      first_name: admin?.name,
+      name: admin?.name,
       mobile: admin?.mobile,
       featured_image: admin?.featured_image,
     };
 
     return {
       access_token: this.jwtService.sign(payload),
+      user: payload
     };
   }
 
@@ -56,47 +59,105 @@ export class AuthService {
     // return this.adminService.changePassword(admin.id, changePasswordDto);
   }
   async register(body: any) {
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiry = new Date();
-    otpExpiry.setMinutes(otpExpiry.getMinutes() + 1);
+    const { otp, otpExpiry } = generateOtp();
 
-    const customer = await this.customerModel.findOne({ mobile: body.mobile });
-    if (!customer) {
-      const { password } = body
-      const saltRounds = 10; // Higher rounds make it more secure but slower
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
-      await this.customerModel.create({
-        ...body,
-        otp: "1234",
-        password: hashedPassword,
-        otpExpiry,
-      });
-      return { message: 'OTP sent successfully' };
-    } else {
-      throw new Error('user already exist');
+    // Check if email or mobile exists
+    const existingCustomer = await this.customerModel.findOne({
+      $or: [
+        { email: body.email },
+        { mobile: body.mobile },
+      ],
+    });
+
+    if (existingCustomer) {
+      // If email exists
+      if (existingCustomer.email === body.email) {
+        ResponseHelper.conflict('error', "1100", "Email already exists");
+        return;
+      }
+
+      // If mobile exists
+      if (existingCustomer.mobile === body.mobile) {
+        ResponseHelper.conflict('error', "1100", "Mobile number already exists");
+        return;
+      }
     }
 
+    // If both email and mobile are unique, proceed with registration
+    const { password } = body;
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    await this.customerModel.create({
+      ...body,
+      otp: "1234",  // Or use `otp` from `generateOtp()` if needed
+      password: hashedPassword,
+      otpExpiry,
+    });
+
+    return { message: 'OTP sent' };
   }
 
-  async verifyOtp(email: string, otp: string) {
-    const customer = await this.customerModel.findOne({ email });
-    
-    // Compare expiry time in milliseconds to avoid timezone issues
-    const currentTime = new Date().getTime(); // Current time in milliseconds
-    const otpExpiryTime = new Date(customer.otpExpiry).getTime(); // Customer OTP expiry time in milliseconds
-      
 
-    if (!customer || customer.otp != otp || currentTime >= otpExpiryTime) {
-      throw new Error('Invalid OTP');
+  async verifyOtp(email: string, otp: string) {
+    const customer: any = await this.customerModel.findOne({ email });
+
+    const currentTime = new Date().getTime(); // Current time in milliseconds
+    const otpExpiryTime = new Date(customer?.otpExpiry).getTime(); // Customer OTP expiry time in milliseconds
+
+    if (!customer) {
+      ResponseHelper.notFound('Invalid OTP', "400", "Invalid OTP provided or expired.");
+      return
     }
+    if (customer.otp != otp) {
+      ResponseHelper.notFound('Invalid OTP', "400", 'Invalid OTP provided');
+
+    }
+    if (currentTime >= otpExpiryTime) {
+      ResponseHelper.notFound('Invalid OTP', "400", 'OTP expired');
+
+    }
+
+    const payload = {
+      email: customer.email,
+      _id: customer._id,
+      name: customer?.name,
+      mobile: customer?.mobile,
+      featured_image: customer?.featured_image,
+    };
+
 
     await this.customerModel.updateOne(
       { email },
-      { isVerified: true, otp: null }
+      { isVerified: true }
     );
-
-    return {
+    return ResponseHelper.success('success', 201, "login success", {
       access_token: this.jwtService.sign({ id: customer._id, email, mobile: customer.mobile }),
-    };
+      user: payload,
+
+    });
+
+  }
+
+
+  async update(otpData) {
+    try {
+
+      console.log("otpData", otpData);
+      const { email } = otpData;
+
+      delete otpData.email;
+      const updatedCustomer = await this.customerModel.findOneAndUpdate(
+        { email }, // Find customer by email
+        otpData,
+        { new: true } // Return the updated document
+      );
+
+      return ResponseHelper.success('success', 201, "OTP send successfully", );
+
+    } catch (error) {
+      return ResponseHelper.conflict('error', "500", "Enternal server error");
+
+    }
   }
 }

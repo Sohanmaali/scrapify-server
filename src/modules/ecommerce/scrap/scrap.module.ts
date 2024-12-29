@@ -4,16 +4,19 @@ import { ScrapController } from './scrap.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ScrapSchema } from './entities/scrap.schema';
 import { MulterModule } from '@nestjs/platform-express';
+import { FileSchema } from '../../../cms/files/entities/file.schema';
+import { MailHelper } from '../../../cms/helper/mail.helper';
+import { FrontendScrapController } from './frontendScrap.controller';
 
 @Module({
  imports: [
-      MongooseModule.forFeature([{ name: 'Scrap', schema: ScrapSchema }]), // Registering the Admin model
+      MongooseModule.forFeature([{ name: 'Scrap', schema: ScrapSchema },{ name: 'File', schema: FileSchema }]), 
       MulterModule.register({
-        dest: './uploads/images', // Path where files will be stored
+        dest: '/', // Path where files will be stored
       }),
     ],
 
-  providers: [ScrapService],
-  controllers: [ScrapController]
+  providers: [ScrapService,MailHelper],
+  controllers: [ScrapController,FrontendScrapController]
 })
 export class ScrapModule {}

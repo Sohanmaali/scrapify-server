@@ -6,32 +6,124 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Buffer } from 'buffer';
 import { ensureUniqueSlug, generateSlug } from './slugHelper';
-// import { first } from 'rxjs';
 
 export class CmsHelper {
   constructor() { }
 
   static async findOne(req, model) {
-    return model.findById({ _id: req.params.id });
+    const query: any = {};
+
+    if (mongoose.Types.ObjectId.isValid(req.params.id)) {
+      query._id = req.params.id;
+    } else {
+      query.slug = req.params.id;
+    }
+
+    return model.findOne(query);
   }
+
+
 
   static async findByType(type, req, model) {
 
-    console.log("=============",req);
-    
     return model.findOne({ [type]: req.body[type] });
   }
 
   // Create a new entry
-  static async create(req, model) {
+  // static async create(req, model, fileModel?) {
+  //   try {
+  //     const data = req.body;
+  //     console.log('data', data);
+
+  //     const name = data.name || data.title; 
+  //     if (!name) {
+  //       throw new Error('Name or title is required to generate a slug');
+  //     }
+
+  //     if (req?.file) {
+  //       const filePath = req?.file?.path;
+  //       const relativeFilePath = filePath.replace(process.cwd() + '\\public', '');
+  //       const imageData = {
+  //         destination: req?.file?.destination,
+  //         filename: req?.file?.filename,
+  //         filepath: relativeFilePath
+  //       }
+
+  //       const fileData = await fileModel.create(imageData);
+  //       if (fileData) {
+  //         data.featured_image = fileData._id
+  //       }
+  //     }
+
+  //     const slug = generateSlug(name);
+
+  //     // Ensure the slug is unique in the database
+  //     const uniqueSlug = await ensureUniqueSlug(slug, model);
+
+  //     // Add the slug to the data object
+  //     data.slug = uniqueSlug;
+
+  //     // Save the entry to the database
+  //     return await model.create(data);
+  //   } catch (error) {
+  //     console.error('Error creating new entry:', error);
+  //     throw new Error('Error creating new entry');
+  //   }
+  // }
+
+
+  static async create(req, model, fileModel?) {
     try {
       const data = req.body;
       console.log('data', data);
 
-      // Generate the initial slug from the provided name or title
-      const name = data.name || data.title; // Replace `name` or `title` based on your model structure
+      const name = data.name || data.title;
       if (!name) {
         throw new Error('Name or title is required to generate a slug');
+      }
+
+      // Handle single image for featured_image
+      if (req?.file) {
+        const filePath = req?.file?.path;
+        const relativeFilePath = filePath.replace(process.cwd() + '\\public', '');
+
+        const imageData = {
+          destination: req?.file?.destination,
+          filename: req?.file?.filename,
+          filepath: relativeFilePath
+        };
+
+        // Save the single file (featured image) in the fileModel
+        const fileData = await fileModel.create(imageData);
+        if (fileData) {
+          data.featured_image = fileData._id; // Store in featured_image if it's a single file
+        }
+      }
+
+      // Handle multiple images for gallery
+      const galleryImageIds = [];
+      if (req?.files && req.files.length > 0) {
+        for (const file of req.files) {
+          const filePath = file?.path;
+          const relativeFilePath = filePath.replace(process.cwd() + '\\public', '');
+
+          const imageData = {
+            destination: file?.destination,
+            filename: file?.filename,
+            filepath: relativeFilePath
+          };
+
+          // Save each file (gallery image) in the fileModel
+          const fileData = await fileModel.create(imageData);
+          if (fileData) {
+            galleryImageIds.push(fileData._id); // Store multiple image IDs in the gallery array
+          }
+        }
+
+        // Assign gallery image IDs to the data object if any multiple images exist
+        if (galleryImageIds.length > 0) {
+          data.gallery = galleryImageIds;
+        }
       }
 
       const slug = generateSlug(name);
@@ -51,13 +143,40 @@ export class CmsHelper {
   }
 
   // Update an entry
-  static async update(req, model) {
+  static async update(req, model, fileModel?) {
     try {
       const { id } = req.params;
       const data = req.body;
       if (!mongoose.Types.ObjectId.isValid(id)) {
         throw new Error('Invalid ID');
       }
+
+      // console.log("=-=-======-=-====", data?.featured_image);
+
+      if (data?.children == "" || data?.children == null) {
+        data.children = [];
+
+      }
+      if (data.featured_image?._id) {
+        data.featured_image = new mongoose.Types.ObjectId(data.featured_image?._id)
+      }
+
+
+      if (req?.file) {
+        const filePath = req?.file?.path;
+        const relativeFilePath = filePath.replace(process.cwd() + '\\public', '');
+        const imageData = {
+          destination: req?.file?.destination,
+          filename: req?.file?.filename,
+          filepath: relativeFilePath
+        }
+
+        const fileData = await fileModel.create(imageData);
+        if (fileData) {
+          data.featured_image = fileData._id
+        }
+      }
+
       const updatedEntry = await model.findByIdAndUpdate({ _id: id }, data, {
         new: true,
       });

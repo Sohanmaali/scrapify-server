@@ -44,16 +44,14 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ItemsModule } from './items/items.module';
 import { ConfigModule } from '@nestjs/config';
 import { FileModule } from './cms/files/file.module';
-// import { AokModule } from './modules/aok/aok.module';
 import { AuthenticationModule } from './modules/authentication/authentication.module';
-import { SettingModule } from './modules/setting/setting.module';
-import { RegionModule } from './modules/region/region.module';
-import { CategoryModule } from './modules/category/category.module';
-import { StatusModule } from './modules/status/status.module';
+import { SettingModule } from './cms/setting/setting.module';
+import { RegionModule } from './cms/region/region.module';
+import { CategoryModule } from './cms/category/category.module';
 import { EcommerceModule } from './modules/ecommerce/ecommerce.module';
+import { StatusModule } from './cms/status/status.module';
 
 @Module({
   imports: [
@@ -63,10 +61,7 @@ import { EcommerceModule } from './modules/ecommerce/ecommerce.module';
     MongooseModule.forRoot(process.env.DB_URL, {
       serverSelectionTimeoutMS: 20000,
     }),
-    // ItemsModule,
-    // BorrowingModule,
     FileModule,
-    // AokModule,
     AuthenticationModule,
     SettingModule,
     RegionModule,

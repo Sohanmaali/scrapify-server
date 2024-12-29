@@ -1,9 +1,10 @@
 // src/modules/authentication/auth/strategies/local.strategy.ts
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Res, UnauthorizedException } from '@nestjs/common';
 import { AdminService } from '../admin/admin.service';
 import { AuthService } from './auth.service';
+import { ResponseHelper } from '../../../cms/helper/custom-exception.filter';
 
 @Injectable()
 export class AdminLocalStrategy extends PassportStrategy(Strategy,"admin-local") {
@@ -35,13 +36,12 @@ export class CustomerLocalStrategy extends PassportStrategy(Strategy,"customer-l
   }
 
   async validate(email: string, password: string): Promise<any> {
-    console.log('local strategy', email, password);
+
+    console.log("-=====-==local strategy", email, password);
+    
+    // console.log('local strategy', email, password);
 
     const customer = await this.authService.validateCustomer(email, password);
-
-    if (!customer) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
     return customer;
   }
 }

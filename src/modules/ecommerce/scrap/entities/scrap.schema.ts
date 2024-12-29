@@ -13,8 +13,11 @@ export class Scrap extends Document {
   @Prop({ default: 0 })
   quentity: number;
 
-  @Prop({ type: [MongooseSchema.Types.ObjectId], ref: 'Catgory' })
-  catagory: string;
+  @Prop({ default: null })
+  type: string;
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Catgory' })
+  catagory: MongooseSchema.Types.ObjectId;
 
   @Prop({ default: null })
   description: string;
@@ -25,11 +28,16 @@ export class Scrap extends Document {
   @Prop()
   price: number;
 
-  @Prop()
-  image: string;
-
-  // @Prop({ default: null })
-  // delete_at: Date | null;
 }
 
 export const ScrapSchema = SchemaFactory.createForClass(Scrap);
+
+ScrapSchema.pre('find', function (next) {
+  this.populate('gallery');
+  next();
+});
+
+ScrapSchema.pre('findOne', function (next) {
+  this.populate('gallery');
+  next();
+});

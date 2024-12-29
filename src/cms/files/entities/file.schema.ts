@@ -3,11 +3,14 @@ import { Document } from 'mongoose';
 
 @Schema()
 export class File extends Document {
-  @Prop()
-  price: number;
+  @Prop({ default: null })
+  destination: string;
 
-  @Prop()
-  image: string;
+  @Prop({ default: null })
+  filename: string;
+
+  @Prop({ default: null })
+  filepath: string;
 
   @Prop({ default: Date.now })
   create_at: Date;

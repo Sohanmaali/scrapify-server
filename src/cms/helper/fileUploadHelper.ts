@@ -1,5 +1,6 @@
+
 import { diskStorage } from 'multer';
-import { extname, join } from 'path';
+import { extname, join, basename } from 'path';
 import * as fs from 'fs';
 
 export class ImageUploadHelper {
@@ -14,16 +15,33 @@ export class ImageUploadHelper {
 
   static storage = diskStorage({
     destination: (req, file, callback) => {
-      const uploadPath = join(process.cwd(), 'public', 'uploads'); // Save to `public/uploads` folder
+      // Get current year and month
+      const year = new Date().getFullYear();
+      const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+      const month = monthNames[new Date().getMonth()]; // Get month name
+
+      // Set upload path to `public/images/year/month`
+      const uploadPath = join(process.cwd(), 'public', 'images', year.toString(), month);
+
+      // Ensure the directory exists
       if (!fs.existsSync(uploadPath)) {
-        fs.mkdirSync(uploadPath, { recursive: true }); // Ensure the directory exists
+        fs.mkdirSync(uploadPath, { recursive: true });
       }
+
       callback(null, uploadPath);
     },
     filename: (req, file, callback) => {
       const fileExtension = extname(file.originalname);
-      const fileName = `image-${Date.now()}${fileExtension}`; // Generate a unique file name
-      callback(null, fileName);
+      const originalName = basename(file.originalname, fileExtension); // Get original filename without extension
+      const currentDate = Date.now() // Format: YYYY-MM-DD
+
+      const newFileName = `${currentDate}-${originalName}${fileExtension}`;
+
+      // Return newFileName
+      callback(null, newFileName);
     },
   });
 }

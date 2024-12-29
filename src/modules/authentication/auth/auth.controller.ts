@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
   Patch,
   Post,
   Req,
@@ -14,6 +16,8 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { AdminLocalStrategy } from './local.strategy';
 import { CustomerLocalStrategy } from './local.strategy';
 import { AuthGuard } from '@nestjs/passport';
+import { generateOtp } from '../../../cms/helper/commonhelper';
+import { ResponseHelper } from '../../../cms/helper/custom-exception.filter';
 
 @Controller('auth')
 export class AuthController {
@@ -40,32 +44,57 @@ export class AuthController {
 
   @Post('customer/register')
   async customerRegister(@Body() body: any) {
-console.log("-=-=-==-=-=---=sohan");
 
-    return body;
-    return this.authService.register(body);
+
+    // try {
+    return await this.authService.register(body);
+    // return result;
+    // } catch (error) {
+    //   return error.message
+    // }
+
   }
 
   @UseGuards(AuthGuard('customer-local'))
   @Post('customer/login')
+
   async Customerlogin(@Req() req) {
 
-    if (true) {
-      
+    if (!req?.user?.isVerified) {
+      const optData = generateOtp();
+
+      return await this.authService.update({ ...optData, _id: req?.user?._id });
+
     }
 
     return this.authService.login(req.user);
   }
+  
 
 
   @Post('customer/verify')
-  async verifyOtp(@Body() body: { email: string; otp: string }, ) {
-    try {
-      return this.authService.verifyOtp(body.email, body.otp);
-    } catch (error) {
-      return error
-    }
+  async verifyOtp(@Body() body: { email: string; otp: string }) {
+    console.log("-=-=====-=111111", body);
+
+    return this.authService.verifyOtp(body.email, body.otp);
+    //  ResponseHelper.success("success", 201, "success", data);
+    //  return
   }
+
+  // @UseGuards(AuthGuard('customer-local'))
+  @Post('customer/resend-otp')
+  async resendOtp(@Req() req) {
+
+    const optData = generateOtp();
+
+    const data= await this.authService.update({ ...optData, ...req.body });
+
+    console.log("-=-=====-=111111", data);
+
+    return data
+
+  }
+
 }
 
 
