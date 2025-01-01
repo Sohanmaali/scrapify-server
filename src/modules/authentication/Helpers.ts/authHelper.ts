@@ -44,8 +44,9 @@ export default async function decodeToken(
 ): Promise<TokenPayload | null> {
   try {
     // Extract token from the Authorization header or cookies
-    const authHeader = request.headers[headerName];
+    const authHeader = request.headers["authorization"];
     let token = '';
+
 
     if (authHeader && authHeader.startsWith('Bearer ')) {
       token = authHeader.split(' ')[1]; // Extract the token after "Bearer"

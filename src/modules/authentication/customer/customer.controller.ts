@@ -1,18 +1,16 @@
 import { Controller, Get, Patch, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CustomerService } from './customer.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard, JwtCustomerGuard } from '../auth/jwt-auth.guard';
 import { ResponseHelper } from '../../../cms/helper/custom-exception.filter';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ImageUploadHelper } from '../../../cms/helper/fileUploadHelper';
+// import { ImageUploadHelper } from '../../../cms/helper/fileUploadHelper';
 
 @Controller('customer')
-@UseGuards(JwtAuthGuard)
-@UseInterceptors(FileInterceptor('featured_image', { storage: ImageUploadHelper.storage })) // Use Multer at the class level
-
+@UseGuards(JwtCustomerGuard)
+@UseInterceptors(FileInterceptor('featured_image',)) // Use Multer at the class level
 
 export class CustomerController {
   constructor(private customerService: CustomerService) {
-   
   }
 
   @Get()
@@ -108,18 +106,18 @@ export class CustomerController {
     }
   }
   @Post("update-profile")
-async updateProfile(@Req() req, @Res() res) {
-  try {
-    // Call service method to handle the profile update logic
-    const data = await this.customerService.updateProfile(req);
+  async updateProfile(@Req() req, @Res() res) {
+    try {
+      // Call service method to handle the profile update logic
+      const data = await this.customerService.updateProfile(req);
 
-    // Return the successful response
-    return res.status(200).json(ResponseHelper.success("success", 200, "Profile updated successfully", data));
+      // Return the successful response
+      return res.status(200).json(ResponseHelper.success("success", 200, "Profile updated successfully", data));
 
-  } catch (error) {
-    console.error('Error:', error);
-    return res.status(500).json(ResponseHelper.internalError("error", "500", "Internal server error"));
+    } catch (error) {
+      console.error('Error:', error);
+      return res.status(500).json(ResponseHelper.internalError("error", "500", "Internal server error"));
+    }
   }
-}
 
 }

@@ -30,14 +30,6 @@ export class ScrapService {
   }
 
   async create(req) {
-    // const subject = 'Welcome to Our Platform';
-    // const context = {
-    //   firstName: "sohn",  // dynamic value for firstName
-    //   subject,    // dynamic value for subject
-    //   year: new Date().getFullYear(),  // current year
-    // };
-
-    // return await this.mailHelper.sendMailWithTemplate("sohanmaali4@gmail.com", subject, 'welcome-email', context);
 
     const data = await CmsHelper.create(req, this.scrapModel, this.fileModel);
     return data;

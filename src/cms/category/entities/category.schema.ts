@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 
-@Schema({ timestamps: true }) // Automatically manage createdAt and updatedAt
+@Schema({ timestamps: true })
 export class Category extends Document {
 
   @Prop({ required: true })
@@ -12,6 +12,9 @@ export class Category extends Document {
 
   @Prop({ default: null })
   type: string;
+
+  @Prop({ default: "kg" })
+  unit_type: string;
 
   @Prop({ required: true, default: null })
   slug: string;

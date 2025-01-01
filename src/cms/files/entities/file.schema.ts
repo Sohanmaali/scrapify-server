@@ -12,6 +12,15 @@ export class File extends Document {
   @Prop({ default: null })
   filepath: string;
 
+  @Prop({ default: null })
+  mimeType:string
+
+  @Prop({ default: null })
+  size:string;
+
+  @Prop({ default: null })
+  module: string;
+
   @Prop({ default: Date.now })
   create_at: Date;
 

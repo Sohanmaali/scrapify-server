@@ -16,6 +16,8 @@ export class FrontdendRegionController {
     async findType(@Req() req, @Res() res) {
         try {
 
+            
+
             const query: any = { delete_at: null, type: req.params.type };
             const data = await this.regionService.findByType(req, query);
 

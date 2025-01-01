@@ -12,7 +12,7 @@ import { ImageUploadHelper } from '../../cms/helper/fileUploadHelper';
 // import { Types } from 'mongoose';
 
 @Controller('cms/category')
-@UseInterceptors(FileInterceptor('featured_image', { storage: ImageUploadHelper.storage })) // Use Multer at the class level
+@UseInterceptors(FileInterceptor('featured_image', )) // Use Multer at the class level
 
 export class CategoryController {
 

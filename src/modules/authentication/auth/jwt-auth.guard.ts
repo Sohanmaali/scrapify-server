@@ -1,5 +1,3 @@
-
-
 import {
   CanActivate,
   ExecutionContext,
@@ -34,7 +32,7 @@ export class JwtAuthGuard implements CanActivate {
 
 @Injectable()
 export class JwtCustomerGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(private reflector: Reflector) { }
   async canActivate(context: ExecutionContext): Promise<boolean> {
     try {
       const request = context.switchToHttp().getRequest();
@@ -43,15 +41,18 @@ export class JwtCustomerGuard implements CanActivate {
         context.getClass(),
       ]);
 
+
+
+
       if (
         isPublic &&
-        !request.cookies['aok'] &&
+        !request.cookies['scrapify_'] &&
         !request?.headers?.authorization
       ) {
         return true;
       }
 
-      const resp = await decodeToken(request, 'aok');
+      const resp = await decodeToken(request, 'scrapify_');
 
       request.auth = resp;
       if (resp) {

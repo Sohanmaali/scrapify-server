@@ -46,6 +46,7 @@ import { ValidationPipe, Logger } from '@nestjs/common';
 import * as express from 'express';
 import * as dotenv from 'dotenv';
 import { join } from 'path';
+import * as bodyParser from 'body-parser';
 import { CustomExceptionFilter } from '../src/cms/helper/custom-exception.filter';
 
 dotenv.config();
@@ -75,6 +76,10 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+   // Increase the body size limit
+   app.use(bodyParser.json({ limit: '50mb' }));
+   app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+ 
 
   await app.listen(process.env.PORT);
   Logger.log(`Server is running on Port ${process.env.PORT}`, 'Bootstrap');

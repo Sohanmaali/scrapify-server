@@ -7,9 +7,6 @@ export class Scrap extends Document {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true })
-  slug: string;
-
   @Prop({ default: 0 })
   quentity: number;
 
@@ -19,14 +16,49 @@ export class Scrap extends Document {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Catgory' })
   catagory: MongooseSchema.Types.ObjectId;
 
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Customer' })
+  customer: MongooseSchema.Types.ObjectId;
+
   @Prop({ default: null })
   description: string;
 
+  @Prop({ default: null })
+  total: number;
+
+  @Prop({ default: null })
+  contact: string;
+
+  @Prop({ default: null })
+  alternate_contact: string;
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Status' })
+  status: MongooseSchema.Types.ObjectId
+
+  @Prop({ default: Date.now })
+  available_date_time: Date
+  
   @Prop({ type: [MongooseSchema.Types.ObjectId], ref: 'File' })
   gallery: MongooseSchema.Types.ObjectId[];
 
   @Prop()
-  price: number;
+  sell_price: number;
+
+  // ================ADDRESS================
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Region' })
+  country: MongooseSchema.Types.ObjectId;
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Region' })
+  state: MongooseSchema.Types.ObjectId;
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Region' })
+  city: MongooseSchema.Types.ObjectId;
+
+  @Prop({ required: true })
+  address: string;
+
+  @Prop({ required: true })
+  pincode: number
 
 }
 

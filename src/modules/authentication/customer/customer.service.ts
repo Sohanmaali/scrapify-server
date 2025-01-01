@@ -7,6 +7,7 @@ import { CustomPagination } from '../../../cms/helper/piplineHalper';
 import { CmsHelper } from '../../../cms/helper/cmsHelper';
 import { ResponseHelper } from '../../../cms/helper/custom-exception.filter';
 import { File } from '../../../cms/files/entities/file.schema';
+import { ImageUploadHelper } from '../../../cms/helper/fileUploadHelper';
 
 @Injectable()
 export class CustomerService {
@@ -85,33 +86,36 @@ export class CustomerService {
   async updateProfile(req) {
     const filter = { _id: req.auth?._id };
     const update = { ...req.body };
+    console.log("-=-=-=-==-update", req.body);
+
     delete update._id; // Remove _id from the update object
     const options = { new: true, runValidators: true };
-    if (update.featured_image && typeof update.featured_image == "string") {
-      update.featured_image = JSON.parse(update.featured_image);
-    }
-    
-
+    if (update?.featured_image && typeof update?.featured_image === "string") {
+      try {
+          update.featured_image = JSON.parse(update.featured_image);
+      } catch (err) {
+          console.error("Error parsing featured_image:", err.message);
+          // throw new Error("Invalid JSON format for featured_image");
+      }
+  }
     // Check if delete_at is null
     if (update.delete_at === 'null') {
       update.delete_at = null;
     }
 
+
+
     if (req?.file) {
-      const filePath = req?.file?.path;
-      const relativeFilePath = filePath.replace(process.cwd() + '\\public', '');
-      const imageData = {
-        destination: req?.file?.destination,
-        filename: req?.file?.filename,
-        filepath: relativeFilePath
+
+      console.log("=-=-=-=-==-==--==re", req?.file);
+
+      const uploadedImages = await ImageUploadHelper(req, this.fileModel);
+
+      if (uploadedImages) {
+
+        update.featured_image = uploadedImages;
       }
 
-      const fileData = await this.fileModel.create(imageData);
-
-
-      if (fileData) {
-        update.featured_image = fileData._id;
-      }
     }
 
     // Perform the update operation

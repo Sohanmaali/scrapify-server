@@ -6,6 +6,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Buffer } from 'buffer';
 import { ensureUniqueSlug, generateSlug } from './slugHelper';
+import { ImageUploadHelper } from './fileUploadHelper';
 
 export class CmsHelper {
   constructor() { }
@@ -75,55 +76,50 @@ export class CmsHelper {
   static async create(req, model, fileModel?) {
     try {
       const data = req.body;
-      console.log('data', data);
+
+      if (data?.city == "" || data?.city == null) {
+        data.city = null;
+
+      }
+      if (data?.country == "" || data?.country == null) {
+        data.country = null;
+
+      }
+      if (data?.state == "" || data?.state == null) {
+        data.state = null;
+
+      }
+
 
       const name = data.name || data.title;
       if (!name) {
         throw new Error('Name or title is required to generate a slug');
       }
 
-      // Handle single image for featured_image
+
+
       if (req?.file) {
-        const filePath = req?.file?.path;
-        const relativeFilePath = filePath.replace(process.cwd() + '\\public', '');
+        const uploadedImages = await ImageUploadHelper(req, fileModel);
 
-        const imageData = {
-          destination: req?.file?.destination,
-          filename: req?.file?.filename,
-          filepath: relativeFilePath
-        };
-
-        // Save the single file (featured image) in the fileModel
-        const fileData = await fileModel.create(imageData);
-        if (fileData) {
-          data.featured_image = fileData._id; // Store in featured_image if it's a single file
-        }
+        data.featured_image = uploadedImages;
       }
 
-      // Handle multiple images for gallery
-      const galleryImageIds = [];
-      if (req?.files && req.files.length > 0) {
-        for (const file of req.files) {
-          const filePath = file?.path;
-          const relativeFilePath = filePath.replace(process.cwd() + '\\public', '');
 
-          const imageData = {
-            destination: file?.destination,
-            filename: file?.filename,
-            filepath: relativeFilePath
-          };
 
-          // Save each file (gallery image) in the fileModel
-          const fileData = await fileModel.create(imageData);
-          if (fileData) {
-            galleryImageIds.push(fileData._id); // Store multiple image IDs in the gallery array
-          }
-        }
+      if (req?.files.gallery && req?.files.gallery.length > 0) {
 
-        // Assign gallery image IDs to the data object if any multiple images exist
-        if (galleryImageIds.length > 0) {
-          data.gallery = galleryImageIds;
-        }
+        const uploadedImages = await ImageUploadHelper(req, fileModel);
+
+        data.gallery = uploadedImages;
+
+      }
+
+      if (req?.files.featured_image && req?.files.featured_image > 0) {
+
+        const uploadedImages = await ImageUploadHelper(req, fileModel);
+
+        data.featured_image = uploadedImages;
+
       }
 
       const slug = generateSlug(name);
@@ -142,6 +138,7 @@ export class CmsHelper {
     }
   }
 
+
   // Update an entry
   static async update(req, model, fileModel?) {
     try {
@@ -151,8 +148,6 @@ export class CmsHelper {
         throw new Error('Invalid ID');
       }
 
-      // console.log("=-=-======-=-====", data?.featured_image);
-
       if (data?.children == "" || data?.children == null) {
         data.children = [];
 
@@ -160,7 +155,18 @@ export class CmsHelper {
       if (data.featured_image?._id) {
         data.featured_image = new mongoose.Types.ObjectId(data.featured_image?._id)
       }
+      if (data?.city == "" || data?.city == null) {
+        data.city = null;
 
+      }
+      if (data?.country == "" || data?.country == null) {
+        data.country = null;
+
+      }
+      if (data?.state == "" || data?.state == null) {
+        data.state = null;
+
+      }
 
       if (req?.file) {
         const filePath = req?.file?.path;

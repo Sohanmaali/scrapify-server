@@ -6,8 +6,8 @@ import { ImageUploadHelper } from '../../../cms/helper/fileUploadHelper';
 
 @Controller('scrap')
 @UseInterceptors(
-  FileInterceptor('featured_image', { storage: ImageUploadHelper.storage }),
-  FilesInterceptor('gallery', 10, { storage: ImageUploadHelper.storage }) // Max 10 files
+  FileInterceptor('featured_image', ),
+  FilesInterceptor('gallery', 10, ) // Max 10 files
 )export class ScrapController {
   constructor(private readonly scrapService: ScrapService) { 
     console.log("scrap controller loaded");
