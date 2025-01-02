@@ -11,6 +11,7 @@ import { AdminLocalStrategy, CustomerLocalStrategy } from './local.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CustomerModule } from '../customer/customer.module';
 import { CustomerSchema } from '../customer/entities/customer.schema';
+import { MailHelper } from '../../../cms/helper/mail.helper';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { CustomerSchema } from '../customer/entities/customer.schema';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AdminLocalStrategy, CustomerLocalStrategy],
+  providers: [AuthService, AdminLocalStrategy, CustomerLocalStrategy,MailHelper],
   exports: [AuthService],
 })
 export class AuthModule { }

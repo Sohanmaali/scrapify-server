@@ -4,14 +4,13 @@ import { AdminService } from './admin.service';
 @Controller('admin')
 export class AdminController {
   constructor(private adminService: AdminService) {
-    console.log('admin controller loaded');
+   
   }
 
 
   @Post()
   async create(@Req() req, @Res() res) {
     try {
-      console.log("req.body-=-=======-", req.body);
       
       const data = await this.adminService.create(req);
 

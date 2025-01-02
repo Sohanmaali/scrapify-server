@@ -42,6 +42,7 @@ export class AuthController {
   }
 
 
+
   @Post('customer/register')
   async customerRegister(@Body() body: any) {
 
@@ -53,7 +54,9 @@ export class AuthController {
     //   return error.message
     // }
 
+    
   }
+
 
   @UseGuards(AuthGuard('customer-local'))
   @Post('customer/login')
@@ -93,6 +96,19 @@ export class AuthController {
 
     return data
 
+  }
+
+  // @Post('/SendOtp')
+  // async sendOtp(@Body() data: { phone: string }): Promise<{ msg: string }> {
+  //   let prefix = '+91';
+  //   let phone = prefix.concat(data.phone);
+  //   return await this.auth.sendOtp(phone);
+  // }
+
+  @Post('send')
+  async sendMessage(@Body() body: { to: string; message: string }) {
+    const { to, message } = body;
+    return this.authService.sendOtp(to, message);
   }
 
 }

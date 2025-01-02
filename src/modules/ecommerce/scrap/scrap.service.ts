@@ -6,12 +6,14 @@ import { CustomPagination } from '../../../cms/helper/piplineHalper';
 import { CmsHelper } from '../../../cms/helper/cmsHelper';
 import { File } from '../../../cms/files/entities/file.schema';
 import { MailHelper } from '../../../cms/helper/mail.helper';
+import { Customer } from '../../authentication/customer/entities/customer.schema';
 
 @Injectable()
 export class ScrapService {
   constructor(
     private readonly mailHelper: MailHelper,
     @InjectModel(Scrap.name) private scrapModel: Model<Scrap>,
+    @InjectModel(Customer.name) private customerModel: Model<Customer>,
     @InjectModel(File.name) private fileModel: Model<File>,
   ) { }
 
@@ -23,16 +25,62 @@ export class ScrapService {
       {
         $sort: { created_at: -1 },
       },
-    ];
+      {
+        $lookup: {
+          from: 'files',
+          localField: 'gallery',
+          foreignField: '_id',
+          as: 'gallery',
+        }
+      },
+      {
+        $lookup: {
+          from: 'regions',
+          localField: 'country',
+          foreignField: '_id',
+          as: 'country',
+        }
+      },
+      { $unwind: "$country" },
+      {
+        $lookup: {
+          from: 'regions',
+          localField: 'state',
+          foreignField: '_id',
+          as: 'state',
+        }
+      },
+      { $unwind: "$state" },
 
+      {
+        $lookup: {
+          from: 'regions',
+          localField: 'city',
+          foreignField: '_id',
+          as: 'city',
+        }
+      },
+      { $unwind: "$city" },
+
+    ];
 
     return await CustomPagination(req, pipeline, this.scrapModel);
   }
 
+  
+
+
   async create(req) {
 
     const data = await CmsHelper.create(req, this.scrapModel, this.fileModel);
-    return data;
+
+    const newData :any= await this.scrapModel.findOne({ _id: data._id }).lean();
+
+    if (newData?.customer?.email) {
+     await this.mailHelper.sendMailWithTemplate(newData?.customer?.email, "Request Send Successfully", "scrap-sell-req", newData);
+    }
+
+    return newData;
   }
 
   async findOne(req) {

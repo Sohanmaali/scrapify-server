@@ -10,8 +10,7 @@ import { ImageUploadHelper } from '../../../cms/helper/fileUploadHelper';
   FilesInterceptor('gallery', 10, ) // Max 10 files
 )export class ScrapController {
   constructor(private readonly scrapService: ScrapService) { 
-    console.log("scrap controller loaded");
-    
+      
   }
 
   @Post()  

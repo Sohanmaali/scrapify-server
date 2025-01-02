@@ -9,18 +9,30 @@ import * as bcrypt from 'bcrypt';
 import { CustomerService } from '../customer/customer.service';
 import { generateOtp } from '../../../cms/helper/commonhelper';
 import { ResponseHelper } from '../../../cms/helper/custom-exception.filter';
+import { MailHelper } from '../../../cms/helper/mail.helper';
+import { Twilio } from 'twilio';
 
 // import { ChangePasswordDto } from '../admin/dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
+  private twilioClient: Twilio;
   constructor(
+    private readonly mailHelper: MailHelper,
+
     private adminService: AdminService,
     private customerService: CustomerService,
     @InjectModel(Customer.name) private customerModel: Model<Customer>,
 
     private jwtService: JwtService,
-  ) { }
+  ) { 
+
+    const accountSid = process.env.TWILIO_ACCOUNT_SID
+    const authToken = process.env.TWILIO_AUTH_TOKEN
+
+    this.twilioClient = new Twilio(accountSid, authToken);
+ 
+  }
 
   async validateAdmin(email: string, password: string): Promise<any> {
     const admin = await this.adminService.validateAdmin(email, password);
@@ -94,6 +106,12 @@ export class AuthService {
       password: hashedPassword,
       otpExpiry,
     });
+    console.log("-=-=-=-==-=-=body", body);
+
+    if (body.email) {
+      await this.mailHelper.sendMailWithTemplate(body.email, "Registration Successfully Done", "welcome-email", body);
+    }
+
 
     return { message: 'OTP sent' };
   }
@@ -153,11 +171,29 @@ export class AuthService {
         { new: true } // Return the updated document
       );
 
-      return ResponseHelper.success('success', 201, "OTP send successfully", );
+      return ResponseHelper.success('success', 201, "OTP send successfully",);
 
     } catch (error) {
       return ResponseHelper.conflict('error', "500", "Enternal server error");
 
     }
+  }
+
+  // async sendOtp(phoneNumber: string) {
+  //   const serviceSid =process.env.TZTWILIO_VERIFICATION_SERVICE_SID
+  //   let msg = '';
+  //   await this.twilioClient.verify.v2
+  //     .services(serviceSid)
+  //     .verifications.create({ to: phoneNumber, channel: 'sms' })
+  //     .then((verification) => (msg = verification.status));
+  //   return { msg: msg };
+  // }
+  async sendOtp(to: string, message: string): Promise<any> {
+    const from = process.env.TWILIO_SENDER_PHONE_NUMBER
+    return this.twilioClient.messages.create({
+      body: message,
+      from,
+      to,
+    });
   }
 }

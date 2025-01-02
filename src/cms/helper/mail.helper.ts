@@ -24,6 +24,50 @@ export class MailHelper {
     }
 
     // Helper function to compile the HBS template and send the email
+    //     async sendMailWithTemplate(
+    //         to: string,
+    //         subject: string,
+    //         templateName: string,
+    //         context: object
+    //     ): Promise<void> {
+    //         try {
+
+
+    //             console.log('Context received:', JSON.stringify(context, null, 2));
+
+    //             // Set the path for HBS templates
+    //             const templatePath = path.join(
+    //                 __dirname,
+    //                 '..',
+    //                 '../template',
+    //                 templateName + '.hbs',
+    //             );
+
+
+    //             // Compile the HBS template
+
+
+    //             const template = fs.readFileSync(templatePath, 'utf8');
+    //             const compiledTemplate = hbs.compile(template);
+    //             const html = compiledTemplate({ data:context });
+
+    //             console.log(        "=-=-=-=-=-=-=-==-==",html);
+
+
+    //         // Send email
+    //         const info = await this.transporter.sendMail({
+    //             from: `"${process.env.SENDER_NAME}" <${process.env.SENDER_EMAIL}>`,
+    //             to,
+    //             subject,
+    //             html, // The compiled HTML from the HBS template
+    //         });
+
+    //         console.log('Email sent: %s', info.messageId);
+    //     } catch(error) {
+    //         console.error('Error sending email:', error);
+    //     }
+    // }
+
     async sendMailWithTemplate(
         to: string,
         subject: string,
@@ -31,35 +75,29 @@ export class MailHelper {
         context: object
     ): Promise<void> {
         try {
+            const templatePath = path.join(__dirname, '..', '../template', `${templateName}.hbs`);
 
-            // Set the path for HBS templates
-            const templatePath = path.join(
-                __dirname,
-                '..',
-                '../template',
-                templateName + '.hbs',
-            );
-
-
-            // Compile the HBS template
-
+            if (!fs.existsSync(templatePath)) {
+                throw new Error(`Template not found: ${templatePath}`);
+            }
 
             const template = fs.readFileSync(templatePath, 'utf8');
             const compiledTemplate = hbs.compile(template);
-            const html = compiledTemplate(context);
 
+            const data = { ...context }; 
+            const html = compiledTemplate({ data });
 
-            // Send email
             const info = await this.transporter.sendMail({
                 from: `"${process.env.SENDER_NAME}" <${process.env.SENDER_EMAIL}>`,
                 to,
                 subject,
-                html, // The compiled HTML from the HBS template
+                html,
             });
 
-            console.log('Email sent: %s', info.messageId);
+            console.log('Email sent:', info.messageId);
         } catch (error) {
             console.error('Error sending email:', error);
+            throw error;
         }
     }
 }

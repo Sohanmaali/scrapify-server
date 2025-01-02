@@ -9,15 +9,12 @@ import { ResponseHelper } from '../../../cms/helper/custom-exception.filter';
 @Injectable()
 export class AdminLocalStrategy extends PassportStrategy(Strategy,"admin-local") {
   constructor(private authService: AuthService) {
-    console.log('local strategy');
-
+  
     super({ usernameField: 'email' });
   }
 
   async validate(email: string, password: string): Promise<any> {
-    console.log('local strategy', email, password);
-
-    const admin = await this.authService.validateAdmin(email, password);
+      const admin = await this.authService.validateAdmin(email, password);
 
     if (!admin) {
       throw new UnauthorizedException('Invalid credentials');
@@ -30,17 +27,13 @@ export class AdminLocalStrategy extends PassportStrategy(Strategy,"admin-local")
 @Injectable()
 export class CustomerLocalStrategy extends PassportStrategy(Strategy,"customer-local") {
   constructor(private authService: AuthService) {
-    console.log('local strategy');
-
+   
     super({ usernameField: 'email' });
   }
 
   async validate(email: string, password: string): Promise<any> {
 
-    console.log("-=====-==local strategy", email, password);
     
-    // console.log('local strategy', email, password);
-
     const customer = await this.authService.validateCustomer(email, password);
     return customer;
   }

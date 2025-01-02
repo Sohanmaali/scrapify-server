@@ -26,10 +26,10 @@ export class Scrap extends Document {
   total: number;
 
   @Prop({ default: null })
-  contact: string;
+  mobile: string;
 
   @Prop({ default: null })
-  alternate_contact: string;
+  alternate_mobile: string;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Status' })
   status: MongooseSchema.Types.ObjectId
@@ -66,10 +66,15 @@ export const ScrapSchema = SchemaFactory.createForClass(Scrap);
 
 ScrapSchema.pre('find', function (next) {
   this.populate('gallery');
+  this.populate('customer');
   next();
 });
 
+
 ScrapSchema.pre('findOne', function (next) {
   this.populate('gallery');
+  this.populate('customer');
+
   next();
 });
+
