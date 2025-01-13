@@ -40,6 +40,33 @@ export class FrontendScrapController {
     }
   }
 
+  @Get("assion")
+  async getAssion(@Req() req, @Res() res) {
+    try {
+
+      if (!req.auth) {
+        return res.status(500).json({
+          status: 'error',
+          data: "first login",
+        });
+      }
+
+      const query: any = { delete_at: null, employee: new mongoose.Types.ObjectId(req?.auth?._id) };
+      const data = await this.scrapService.getAssion(req, query);
+
+      return res.status(201).json({
+        status: 'success',
+        data: data,
+      });
+    } catch (error) {
+      console.error('error  ', error);
+      return res.status(500).json({
+        status: 'error',
+        data: error.message,
+      });
+    }
+  }
+
 
 
   @Patch("update/:id")

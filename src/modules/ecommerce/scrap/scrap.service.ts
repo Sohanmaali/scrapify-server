@@ -87,6 +87,73 @@ export class ScrapService {
 
     return await CustomPagination(req, pipeline, this.scrapModel);
   }
+  async getAssion(req, query?) {
+    const pipeline = [
+      {
+        $match: query,
+      },
+      {
+        $lookup: {
+          from: 'files',
+          localField: 'gallery',
+          foreignField: '_id',
+          as: 'gallery',
+        }
+      },
+      {
+        $lookup: {
+          from: 'regions',
+          localField: 'country',
+          foreignField: '_id',
+          as: 'country',
+        }
+      },
+      { $unwind: "$country" },
+
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'category',
+          foreignField: '_id',
+          as: 'catagory',
+        }
+      },
+      { $unwind: "$catagory" },
+      {
+        $lookup: {
+          from: 'status',
+          localField: 'status',
+          foreignField: '_id',
+          as: 'status',
+        }
+      },
+      { $unwind: "$status" },
+
+
+      {
+        $lookup: {
+          from: 'regions',
+          localField: 'state',
+          foreignField: '_id',
+          as: 'state',
+        }
+      },
+      { $unwind: "$state" },
+
+      {
+        $lookup: {
+          from: 'regions',
+          localField: 'city',
+          foreignField: '_id',
+          as: 'city',
+        }
+      },
+      { $unwind: "$city" },
+
+    ];
+
+    return await CustomPagination(req, pipeline, this.scrapModel);
+  }
 
   async getTrash(req, query?) {
     const pipeline = [
@@ -123,6 +190,8 @@ export class ScrapService {
     return newData;
   }
 
+
+
   async findOne(req) {
     const id = req.params.id;
     const data = await CmsHelper.findOne(req, this.scrapModel);
@@ -136,6 +205,11 @@ export class ScrapService {
 
   async update(req) {
     const data = await CmsHelper.update(req, this.scrapModel, this.fileModel);
+    if (req.body.status === process.env.PENDING_STATUS_ID) {
+      console.log("mail");
+
+
+    }
     return data;
   }
 

@@ -36,7 +36,9 @@ export class CustomerService {
     ];
 
     return await CustomPagination(req, pipeline, this.customerModel);
+
   }
+ 
 
   async create(req) {
     const data = await CmsHelper.create(req, this.customerModel, this.fileModel);
