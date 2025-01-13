@@ -59,9 +59,11 @@ async function bootstrap() {
   app.use('/', express.static(join(process.cwd(), 'public')));
   app.useGlobalFilters(new CustomExceptionFilter());
 
+  
   app.enableCors({
     origin: [
       '*',
+      "https://scrapify-admin.vercel.app",
       'http://localhost:3003',
       'http://localhost:3005',
       'http://localhost:3000',
