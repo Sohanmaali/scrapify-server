@@ -33,13 +33,11 @@ import { join } from 'path';
     EcommerceModule,
     DashboardModule,
     SliderModule,
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'), // Serve static files from 'public' folder
-    }),
   ],
   controllers: [AppController],
   providers: [AppService],
 })
+
 
 export class AppModule {
   constructor() {
