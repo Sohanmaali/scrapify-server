@@ -59,7 +59,7 @@ async function bootstrap() {
   app.use('/', express.static(join(process.cwd(), 'public')));
   app.useGlobalFilters(new CustomExceptionFilter());
 
-  
+
   app.enableCors({
     origin: [
       '*',
@@ -75,7 +75,7 @@ async function bootstrap() {
       'http://192.168.43.92:3005',
       'http://192.168.111.92:3005',
       "http://192.168.210.92:3000",
-      "http://192.168.210.92:3005"
+      "http://192.168.210.92:3005",
       
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
