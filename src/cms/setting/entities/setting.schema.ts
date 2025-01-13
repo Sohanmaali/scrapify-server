@@ -16,6 +16,9 @@ export class Setting extends Document {
   image: string;
 
   @Prop({ default: null })
+  type: string;
+
+  @Prop({ default: null })
   delete_at: Date | null;
 }
 

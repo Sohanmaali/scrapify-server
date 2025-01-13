@@ -29,12 +29,14 @@ export class RegionController {
         }
     }
 
-    @Get()
+    @Get("/:type")
     async findType(@Req() req, @Res() res) {
         try {
-            
-            const query: any = { delete_at: null };
-            const data = await this.regionService.findAll(req, query);
+
+
+
+            const query: any = { delete_at: null, type: req.params.type };
+            const data = await this.regionService.findByType(req, query);
 
             return res.status(201).json({
                 status: 'success',
@@ -49,11 +51,31 @@ export class RegionController {
         }
     }
 
+    // @Get()
+    // async findType(@Req() req, @Res() res) {
+    //     try {
+
+    //         const query: any = { delete_at: null };
+    //         const data = await this.regionService.findAll(req, query);
+
+    //         return res.status(201).json({
+    //             status: 'success',
+    //             data: data,
+    //         });
+    //     } catch (error) {
+    //         console.error('error  ', error);
+    //         return res.status(500).json({
+    //             status: 'error',
+    //             data: error.message,
+    //         });
+    //     }
+    // }
+
 
     @Get("type/:type")
     async findAll(@Req() req, @Res() res) {
         try {
-            
+
             const query: any = { delete_at: null, type: req.params.type };
             const data = await this.regionService.findAll(req, query);
 
@@ -74,7 +96,7 @@ export class RegionController {
     async findChildren(@Req() req, @Res() res) {
         try {
 
-            
+
             const query: any = { delete_at: null, parent: new mongoose.Types.ObjectId(req.params.id) };
 
 

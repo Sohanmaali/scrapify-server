@@ -1,10 +1,21 @@
-import { Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res, UseInterceptors } from '@nestjs/common';
 import { SettingService } from './setting.service';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
-@Controller('setting')
+@Controller('cms/setting')
+@UseInterceptors(FileFieldsInterceptor
+    (
+        [
+            { name: 'featured_image', maxCount: 1 }, // Expect a single file for featured_image
+            { name: 'gallery', maxCount: 10 },       // Expect up to 10 files for gallery
+            { name: 'slider', maxCount: 10 },       // Expect up to 10 files for gallery
+        ],
+    )
+)
 export class SettingController {
 
 
+    
     constructor(
         private readonly settingService: SettingService
     ) { }
@@ -13,11 +24,7 @@ export class SettingController {
     async create(@Req() req, @Res() res) {
         try {
 
-            const options = { new: true, upsert: true };
-
-            const newData = { ...req?.body, name: req?.params?.id };
-
-            const data = await this.settingService.createOrUpdate(newData, options);
+            const data = await this.settingService.createOrUpdate(req);
 
             return res.status(201).json({
                 status: 'success',
@@ -36,8 +43,7 @@ export class SettingController {
     async get(@Req() req, @Res() res) {
         try {
 
-
-            const data = await this.settingService.get(req?.params?.id);
+            const data = await this.settingService.get(req);
 
             return res.status(201).json({
                 status: 'success',

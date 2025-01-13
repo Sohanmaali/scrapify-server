@@ -22,17 +22,13 @@ import { JwtAuthGuard, JwtCustomerGuard } from '../../../modules/authentication/
 export class FrontendScrapController {
   constructor(private readonly scrapService: ScrapService) { }
 
-  
+
   @Post()
   async create(@Req() req, @Res() res,) {
     try {
       if (!req?.auth?._id) {
         return res.status(500).json(ResponseHelper.unauthorized("error", "500", "please login"));
       }
-
-
-      
-
       req.body.customer = req?.auth?._id;
 
       const data = await this.scrapService.create(req);
@@ -59,13 +55,9 @@ export class FrontendScrapController {
     }
   }
 
-
   @Get()
   async getAll(@Req() req, @Res() res) {
     try {
-
-      console.log("req.auth._id", req?.auth);
-
 
       if (!req?.auth?._id) {
         return res.status(500).json(ResponseHelper.unauthorized("error", "500", "please login"));

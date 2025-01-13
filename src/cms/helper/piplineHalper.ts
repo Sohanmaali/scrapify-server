@@ -24,7 +24,7 @@ export async function generateOptions(
     skip:
       (parseInt(req.query.page as string, 10) - 1) *
       parseInt(req.query.count as string, 10),
-    sort: { created_at: 'desc' },
+    sort: { createdAt: -1 },
     customLabels: customLabels,
   };
 

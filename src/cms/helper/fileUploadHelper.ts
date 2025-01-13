@@ -73,6 +73,11 @@ export const ImageUploadHelper = async (req, fileModel) => {
     const galleryImages = await processFiles(galleryFiles);
     result = galleryImages.map((file) => file._id); // Store IDs as an array
   }
+  if (req.files?.slider) {
+    const sliderFiles = req.files.slider;
+    const sliderImages = await processFiles(sliderFiles);
+    result = sliderImages.map((file) => file._id); // Store IDs as an array
+  }
 
   return result; // Return the result object containing IDs
 };

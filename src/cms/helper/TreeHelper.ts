@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { ImageUploadHelper } from "./fileUploadHelper";
 
 
 export class TreeHelper {
@@ -49,7 +50,7 @@ export class TreeHelper {
         as: 'children', // The output field
       },
     });
-  
+
     // Step 2: Unwind the 'children' array to process each child individually
     pipeline.push({
       $unwind: {
@@ -57,7 +58,7 @@ export class TreeHelper {
         preserveNullAndEmptyArrays: true, // Ensures documents without children are not excluded
       },
     });
-  
+
     // Step 3: Populate 'featured_image' for each child category
     pipeline.push({
       $lookup: {
@@ -67,7 +68,7 @@ export class TreeHelper {
         as: 'children.featured_image', // The output field
       },
     });
-  
+
     // Step 4: Unwind the 'featured_image' array (if required, as it may be an array)
     pipeline.push({
       $unwind: {
@@ -75,7 +76,7 @@ export class TreeHelper {
         preserveNullAndEmptyArrays: true, // Allows documents without featured images
       },
     });
-  
+
     // Step 5: Group back 'children' to restore the array structure
     pipeline.push({
       $group: {
@@ -84,7 +85,7 @@ export class TreeHelper {
         children: { $push: '$children' }, // Collect children back into an array
       },
     });
-  
+
     // Step 6: Restore the root document structure
     pipeline.push({
       $replaceRoot: {
@@ -93,11 +94,11 @@ export class TreeHelper {
         },
       },
     });
-  
+
     // Execute the aggregation pipeline
     return await modal.aggregate(pipeline);
   }
-  
+
 
 
 
@@ -108,41 +109,40 @@ export class TreeHelper {
       const { id } = req.params;
       const data = req.body;
 
-      // Check if the ID is valid
       if (!mongoose.Types.ObjectId.isValid(id)) {
         throw new Error('Invalid ID');
       }
 
-      // Check if 'children' is provided, and if it is a string, convert it to an array of ObjectId
       if (data?.children) {
         if (typeof data.children === 'string') {
-          // If 'children' is a string, split it by commas and convert to ObjectId
           data.children = data.children.split(',').map(id => new mongoose.Types.ObjectId(id));
         }
-        // If 'children' is an empty string or null, set it to an empty array
         if (data.children === "" || data.children === null) {
           data.children = [];
         }
       } else {
-        // If no 'children' provided, ensure it's an empty array
         data.children = [];
       }
 
       // Handle file upload if provided
       if (req?.file) {
-        const filePath = req?.file?.path;
-        const relativeFilePath = filePath.replace(process.cwd() + '\\public', '');
-        const imageData = {
-          destination: req?.file?.destination,
-          filename: req?.file?.filename,
-          filepath: relativeFilePath,
-        };
+        const uploadedImages = await ImageUploadHelper(req, fileModel);
 
-        const fileData = await fileModel.create(imageData);
-        if (fileData) {
-          data.featured_image = fileData._id;
-        }
+        data.featured_image = uploadedImages;
       }
+
+      console.log("-=-===-=-=-=11111111111=--=-=-",req?.files?.featured_image );
+
+      if (req?.files?.featured_image && req?.files?.featured_image.length > 0) {
+
+
+        const uploadedImages = await ImageUploadHelper(req, fileModel);
+        console.log("-=-===-=-=-=uploadedImages=--=-=-", uploadedImages);
+
+        data.featured_image = uploadedImages;
+
+      }
+
 
       // Perform the update operation
       const updatedEntry = await model.findByIdAndUpdate({ _id: id }, data, {
@@ -164,6 +164,6 @@ export class TreeHelper {
 
   static async findOne(req, model) {
   }
-  
+
 
 }  

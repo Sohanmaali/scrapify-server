@@ -1,20 +1,19 @@
 import { Controller, Get, Post, Req, Res } from '@nestjs/common';
-import { SettingService } from './setting.service';
+import { SliderService } from './slider.service';
 
-@Controller('public/setting')
-export class FrontdendSettingController {
+@Controller('public/slider')
+export class FrontdendSliderController {
 
 
     constructor(
-        private readonly settingService: SettingService
+        private readonly sliderService: SliderService
     ) { }
 
-    @Get("/:id")
+    @Get("show/:id")
     async get(@Req() req, @Res() res) {
         try {
 
-
-            const data = await this.settingService.get(req);
+            const data = await this.sliderService.findOne(req);
 
             return res.status(201).json({
                 status: 'success',

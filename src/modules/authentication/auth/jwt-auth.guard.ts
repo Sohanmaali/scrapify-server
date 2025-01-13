@@ -41,9 +41,6 @@ export class JwtCustomerGuard implements CanActivate {
         context.getClass(),
       ]);
 
-
-
-
       if (
         isPublic &&
         !request.cookies['scrapify_'] &&

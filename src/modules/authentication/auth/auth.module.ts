@@ -15,7 +15,7 @@ import { MailHelper } from '../../../cms/helper/mail.helper';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Auth.name, schema: AuthSchema },{ name: 'Customer', schema: CustomerSchema }]),
+    MongooseModule.forFeature([{ name: Auth.name, schema: AuthSchema }, { name: 'Customer', schema: CustomerSchema }]),
     forwardRef(() => AdminModule),
     forwardRef(() => CustomerModule),
 
@@ -31,7 +31,7 @@ import { MailHelper } from '../../../cms/helper/mail.helper';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AdminLocalStrategy, CustomerLocalStrategy,MailHelper],
+  providers: [AuthService, AdminLocalStrategy, CustomerLocalStrategy, MailHelper],
   exports: [AuthService],
 })
 export class AuthModule { }

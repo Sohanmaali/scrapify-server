@@ -63,10 +63,18 @@ async function bootstrap() {
     origin: [
       '*',
       'http://localhost:3003',
+      'http://localhost:3005',
       'http://localhost:3000',
       'http://192.168.31.127:3003',
+      'http://192.168.111.92:3000',
       'http://192.168.189.228:3000',
       'http://192.168.189.92:3000',
+      'http://192.168.43.92:3000',
+      'http://192.168.43.92:3005',
+      'http://192.168.111.92:3005',
+      "http://192.168.210.92:3000",
+      "http://192.168.210.92:3005"
+      
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
@@ -81,7 +89,12 @@ async function bootstrap() {
    app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
  
 
+   const PORT = process.env.PORT || 5000; // Default to 3000 if PORT is not set
+
+   const HOST = process.env.HOST || 'http://localhost'; // Default host
+
+
   await app.listen(process.env.PORT);
-  Logger.log(`Server is running on Port ${process.env.PORT}`, 'Bootstrap');
+  console.log(`Server is running on ${HOST}:${PORT}/api`, 'Bootstrap');
 }
 bootstrap();

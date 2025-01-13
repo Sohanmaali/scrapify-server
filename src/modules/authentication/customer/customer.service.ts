@@ -39,9 +39,7 @@ export class CustomerService {
   }
 
   async create(req) {
-
-
-    const data = await this.customerModel.create(req);
+    const data = await CmsHelper.create(req, this.customerModel, this.fileModel);
     return data;
   }
 
@@ -57,31 +55,7 @@ export class CustomerService {
   }
 
   async update(req: any) {
-    try {
-
-      if (!req._id) {
-        throw new Error('_id is required for update operation');
-      }
-
-      const filter = { _id: req._id };
-      const update = { ...req };
-      delete update._id; // Remove _id from the update object
-
-      const options = { new: true, runValidators: true };
-
-      const updatedData = await this.customerModel.findOneAndUpdate(filter, update, options);
-
-      if (!updatedData) {
-        throw new Error('No document found with the given _id');
-      }
-
-
-
-      return updatedData;
-    } catch (error) {
-      console.error("Error updating document:", error);
-      throw error;
-    }
+    return await CmsHelper.update(req, this.customerModel, this.fileModel);
   }
   async updateProfile(req) {
     const filter = { _id: req.auth?._id };
@@ -92,12 +66,12 @@ export class CustomerService {
     const options = { new: true, runValidators: true };
     if (update?.featured_image && typeof update?.featured_image === "string") {
       try {
-          update.featured_image = JSON.parse(update.featured_image);
+        update.featured_image = JSON.parse(update.featured_image);
       } catch (err) {
-          console.error("Error parsing featured_image:", err.message);
-          // throw new Error("Invalid JSON format for featured_image");
+        console.error("Error parsing featured_image:", err.message);
+        // throw new Error("Invalid JSON format for featured_image");
       }
-  }
+    }
     // Check if delete_at is null
     if (update.delete_at === 'null') {
       update.delete_at = null;

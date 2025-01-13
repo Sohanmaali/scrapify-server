@@ -8,16 +8,19 @@ export class Scrap extends Document {
   name: string;
 
   @Prop({ default: 0 })
-  quentity: number;
+  quantity: number;
 
   @Prop({ default: null })
-  type: string;
+  unit_type: string;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Catgory' })
-  catagory: MongooseSchema.Types.ObjectId;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Category' })
+  category: MongooseSchema.Types.ObjectId;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Customer' })
   customer: MongooseSchema.Types.ObjectId;
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Customer' })
+  employee: MongooseSchema.Types.ObjectId;
 
   @Prop({ default: null })
   description: string;
@@ -35,8 +38,8 @@ export class Scrap extends Document {
   status: MongooseSchema.Types.ObjectId
 
   @Prop({ default: Date.now })
-  available_date_time: Date
-  
+  available_date: Date
+
   @Prop({ type: [MongooseSchema.Types.ObjectId], ref: 'File' })
   gallery: MongooseSchema.Types.ObjectId[];
 
@@ -60,6 +63,10 @@ export class Scrap extends Document {
   @Prop({ required: true })
   pincode: number
 
+
+  @Prop({ default: null })
+  delete_at: Date
+
 }
 
 export const ScrapSchema = SchemaFactory.createForClass(Scrap);
@@ -67,6 +74,12 @@ export const ScrapSchema = SchemaFactory.createForClass(Scrap);
 ScrapSchema.pre('find', function (next) {
   this.populate('gallery');
   this.populate('customer');
+  this.populate('status');
+  this.populate('country');
+  this.populate('city');
+  this.populate('state');
+  this.populate('category');
+
   next();
 });
 
@@ -74,7 +87,11 @@ ScrapSchema.pre('find', function (next) {
 ScrapSchema.pre('findOne', function (next) {
   this.populate('gallery');
   this.populate('customer');
-
+  this.populate('status');
+  this.populate('country');
+  this.populate('city');
+  this.populate('state');
+  this.populate('category');
   next();
 });
 

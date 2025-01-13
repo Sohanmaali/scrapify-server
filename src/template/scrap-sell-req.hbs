@@ -1,97 +1,4 @@
-{{!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Scrap Sell Request</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-    }
-    .email-container {
-      max-width: 600px;
-      margin: 20px auto;
-      background: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-    }
-    .header {
-      background-color: #28a745;
-      color: #ffffff;
-      text-align: center;
-      padding: 20px;
-    }
-    .header h1 {
-      margin: 0;
-      font-size: 24px;
-    }
-    .content {
-      padding: 20px;
-      color: #333333;
-      line-height: 1.6;
-    }
-    .content h2 {
-      color: #28a745;
-      margin-bottom: 10px;
-    }
-    .details {
-      margin-bottom: 20px;
-    }
-    .details p {
-      margin: 5px 0;
-    }
-    .footer {
-      background-color: #f4f4f4;
-      color: #777777;
-      text-align: center;
-      padding: 10px 20px;
-      font-size: 14px;
-    }
-    .footer a {
-      color: #28a745;
-      text-decoration: none;
-    }
-  </style>
-</head>
-<body>
-  <div class="email-container">
-    <!-- Header -->
-    <div class="header">
-      <h1>Scrap Sell Request</h1>
-    </div>
 
-    <!-- Content -->
-    <div class="content">
-      <h2>Hello [Recipient Name],</h2>
-      <p>We have received your scrap sell request. Below are the details you provided:</p>
-
-      <div class="details">
-        <p><strong>Name:</strong> {{customer.name}}</p>
-        <p><strong>Email:</strong> [Customer Email]</p>
-        <p><strong>Phone:</strong> [Customer Phone]</p>
-        <p><strong>Address:</strong> [Customer Address]</p>
-        <p><strong>Scrap Details:</strong> {{data.catagory}}</p>
-        <p><strong>Scrap Details:</strong> {{context.catagory}}</p>
-        <p><strong>Preferred Pickup Date:</strong> {{catagory}}</p>
-      </div>
-
-      <p>We will review your request and get back to you shortly. Thank you for choosing our services!</p>
-    </div>
-
-    <!-- Footer -->
-    <div class="footer">
-      <p>&copy; 2025 Scrap Services. All rights reserved.</p>
-      <p>
-        Visit our website: <a href="https://example.com">example.com</a> | Contact us: <a href="mailto:support@example.com">support@example.com</a>
-      </p>
-    </div>
-  </div>
-</body>
-</html> --}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -160,18 +67,16 @@
 
     <!-- Content -->
     <div class="content">
-      {{!-- <h2>Hello {{data}},</h2> --}}
       <h2>Hello {{data.customer.name}},</h2>
-      {{!-- <h2>Hello {{}},</h2> --}}
       <p>We have received your scrap sell request. Below are the details you provided:</p>
 
       <div class="details">
         <p><strong>Name:</strong> {{data.customer.name}}</p>
         <p><strong>Email:</strong> {{data.customer.email}}</p>
         <p><strong>Phone:</strong> {{data.customer.mobile}}</p>
-        <p><strong>Address:</strong> {{data.customeraddress}}</p>
+        <p><strong>Address:</strong> {{data.address}}</p>
         <p><strong>Scrap Name:</strong> {{data.name}}</p>
-        <p><strong>Quantity:</strong> {{data.quentity}}</p>
+        <p><strong>Quantity:</strong> {{data.quantity}}</p>
         {{!-- <p><strong>Preferred Pickup Date:</strong> {{available_date_time}}</p> --}}
       </div>
 

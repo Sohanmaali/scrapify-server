@@ -16,7 +16,7 @@ export class FrontdendRegionController {
     async findType(@Req() req, @Res() res) {
         try {
 
-            
+
 
             const query: any = { delete_at: null, type: req.params.type };
             const data = await this.regionService.findByType(req, query);
@@ -63,7 +63,7 @@ export class FrontdendRegionController {
             const data = await this.regionService.findByType(req, query);
             return res.status(201).json(ResponseHelper.success("success", 201, "Data found", data));
 
-            
+
         } catch (error) {
             console.error('error  ', error);
             return res.status(500).json(ResponseHelper.internalError("error", "500", "Internal server error"));

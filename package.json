@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "start": "nest start",
-    "start:dev": "nodemon",
+    "dev": "nodemon",
     "build": "nest build",
     "start:prod": "node dist/main",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

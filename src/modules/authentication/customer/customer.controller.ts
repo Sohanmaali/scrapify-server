@@ -32,6 +32,26 @@ export class CustomerController {
     }
   }
 
+  @Post()
+  async create(@Req() req, @Res() res) {
+    try {
+      const data = await this.customerService.create(req);
+
+      return res.status(201).json({
+        status: 'success',
+        data: data,
+      });
+    } catch (error) {
+      console.error('error  ', error);
+      return res.status(500).json({
+        status: 'error',
+        data: error.message,
+      });
+    }
+  }
+
+
+
   @Get("search")
   async search(@Req() req, @Res() res) {
     try {
@@ -63,7 +83,7 @@ export class CustomerController {
         data: data,
       });
     } catch (error) {
-      console.error('error  ', error);
+      console.error('error  -=-=-=-=-=-=', error);
       return res.status(500).json({
         status: 'error',
         data: error.message,
@@ -74,7 +94,7 @@ export class CustomerController {
   @Patch('update/:id')
   async update(@Req() req, @Res() res) {
     try {
-      const id = req.params.id;
+     
       const data = await this.customerService.update(req);
 
       return res.status(201).json({

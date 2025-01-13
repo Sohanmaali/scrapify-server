@@ -22,9 +22,9 @@ export class ScrapService {
       {
         $match: query,
       },
-      {
-        $sort: { created_at: -1 },
-      },
+      // {
+      //   $sort: { created_at: -1 },
+      // },
       {
         $lookup: {
           from: 'files',
@@ -42,6 +42,27 @@ export class ScrapService {
         }
       },
       { $unwind: "$country" },
+
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'category',
+          foreignField: '_id',
+          as: 'catagory',
+        }
+      },
+      { $unwind: "$catagory" },
+      {
+        $lookup: {
+          from: 'status',
+          localField: 'status',
+          foreignField: '_id',
+          as: 'status',
+        }
+      },
+      { $unwind: "$status" },
+
+
       {
         $lookup: {
           from: 'regions',
@@ -67,18 +88,37 @@ export class ScrapService {
     return await CustomPagination(req, pipeline, this.scrapModel);
   }
 
-  
+  async getTrash(req, query?) {
+    const pipeline = [
+      {
+        $match: query,
+      },
+      {
+        $sort: { created_at: -1 },
+      },
+    ];
+
+    return await CustomPagination(req, pipeline, this.scrapModel);
+  }
+
 
 
   async create(req) {
 
+    req.body.status = process.env.PENDING_STATUS_ID
+
+    console.log("req.body", req.body);
+
+
     const data = await CmsHelper.create(req, this.scrapModel, this.fileModel);
 
-    const newData :any= await this.scrapModel.findOne({ _id: data._id }).lean();
+    const newData: any = await this.scrapModel.findOne({ _id: data._id }).lean();
 
     if (newData?.customer?.email) {
-     await this.mailHelper.sendMailWithTemplate(newData?.customer?.email, "Request Send Successfully", "scrap-sell-req", newData);
+      await this.mailHelper.sendMailWithTemplate(newData?.customer?.email, "Request Send Successfully", "scrap-sell-req", newData);
     }
+    await this.mailHelper.sendMailWithTemplate(process.env.ADMIN_EMAIL, `${newData?.customer?.name} Send Request For Scrap Sell`, "scrap-sell-req", newData);
+
 
     return newData;
   }
@@ -107,4 +147,19 @@ export class ScrapService {
     const data = await CmsHelper.search(req, this.scrapModel);
     return data;
   }
+  async multiTrash(req) {
+    const data = await CmsHelper.multiTrash(req, this.scrapModel);
+    return data;
+  }
+
+  async multiRestore(req, query?) {
+    const data = await CmsHelper.multiRestore(req, this.scrapModel);
+    return data;
+  }
+
+  async multiDelete(req, query?) {
+    const data = await CmsHelper.multiDelete(req, this.scrapModel);
+    return data;
+  }
+
 }

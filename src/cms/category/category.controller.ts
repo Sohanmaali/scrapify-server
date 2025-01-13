@@ -7,13 +7,20 @@
 import { Controller, Get, Injectable, Patch, Post, Req, Res, UseInterceptors } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import mongoose from 'mongoose';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { ImageUploadHelper } from '../../cms/helper/fileUploadHelper';
 // import { Types } from 'mongoose';
 
 @Controller('cms/category')
-@UseInterceptors(FileInterceptor('featured_image', )) // Use Multer at the class level
-
+@UseInterceptors(FileFieldsInterceptor
+    (
+        [
+            { name: 'featured_image', maxCount: 1 }, // Expect a single file for featured_image
+            { name: 'gallery', maxCount: 10 },       // Expect up to 10 files for gallery
+            { name: 'slider', maxCount: 10 },       // Expect up to 10 files for gallery
+        ],
+    )
+)
 export class CategoryController {
 
     constructor(
@@ -22,7 +29,7 @@ export class CategoryController {
 
     @Post()
     async create(@Req() req, @Res() res) {
-        
+
         try {
             const query: any = { delete_at: null };
             const data = await this.categoryService.create(req, query);
@@ -60,7 +67,7 @@ export class CategoryController {
             });
         }
     }
-    
+
 
     @Get()
     async findAll(@Req() req, @Res() res) {
@@ -160,6 +167,9 @@ export class CategoryController {
             const query: any = { delete_at: null };
             const data = await this.categoryService.findOne(req);
 
+            // console.log("-=-==-data=-=--=-", data);
+
+
             return res.status(201).json({
                 status: 'success',
                 data: data,
@@ -180,6 +190,25 @@ export class CategoryController {
             console.error("multi delete", req.body.ids);
 
             const data = await this.categoryService.multiDelete(req);
+
+            return res.status(201).json({
+                status: 'success',
+                data: data,
+            });
+        } catch (error) {
+            console.error('error  ', error);
+            return res.status(500).json({
+                status: 'error',
+                data: error.message,
+            });
+        }
+    }
+
+    @Get('search')
+    async search(@Req() req, @Res() res) {
+        try {
+
+            const data = await this.categoryService.search(req);
 
             return res.status(201).json({
                 status: 'success',

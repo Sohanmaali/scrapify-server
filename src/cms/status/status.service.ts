@@ -7,7 +7,7 @@ import { CustomPagination } from '../../cms/helper/piplineHalper';
 
 @Injectable()
 export class StatusService {
-    
+  
     constructor(
         @InjectModel('Status') private readonly statusModel: Model<Status>,
     ) { }

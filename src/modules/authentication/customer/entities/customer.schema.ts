@@ -1,62 +1,5 @@
-// import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-// import { Document, Schema as MongooseSchema } from 'mongoose';
-
-// @Schema({ timestamps: true }) // Automatically manage createdAt and updatedAt
-// export class Customer extends Document {
-//   @Prop({ required: true }) // Making fields required
-//   name: string;
-
-//   @Prop({ required: true, unique: true }) // Ensure unique email
-//   email: string;
-
-//   @Prop()
-//   otpExpiry: Date;
-
-//   @Prop()
-//   otp: string;
-
-//   @Prop({default: false})
-//   isVerified: boolean;
-
-//   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'File' })
-//   featured_image: File;
-
-//   @Prop()
-//   password: string;
-
-//   @Prop({ required: true, unique: true })
-//   mobile: string;
-
-//   @Prop()
-//   role: string;
-
-//   @Prop()
-//   address: string;
-
-//   @Prop()
-//   access_token: string; // Change to string if it's a JWT
-
-//   @Prop()
-//   refresh_token: string; // Change to string if it's a JWT
-
-//   @Prop()
-//   image: string;
-
-//   @Prop({ default: null })
-//   delete_at: Date | null;
-// }
-
-// export const CustomerSchema = SchemaFactory.createForClass(Customer);
-
-// CustomerSchema.pre('find', function (next) {
-//  this.populate('featured_image');
-//   next();
-// });
-
-
-
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
+import mongoose, { Document, Schema as MongooseSchema } from 'mongoose';
 
 @Schema({ timestamps: true }) // Automatically manage createdAt and updatedAt
 export class Customer extends Document {
@@ -72,6 +15,9 @@ export class Customer extends Document {
   @Prop()
   otp: string;
 
+  @Prop({ default: null })
+  role: string;
+
   @Prop({ default: false })
   isVerified: boolean;
 
@@ -85,22 +31,19 @@ export class Customer extends Document {
   mobile: string;
 
   @Prop()
-  role: string;
-
-  @Prop()
   about_us: string;
 
   @Prop()
   gender: string;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Region' })
-  country: string;
+  country: mongoose.Schema.Types.ObjectId;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Region' })
-  state: string;
+  state: mongoose.Schema.Types.ObjectId;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Region' })
-  city: string;
+  city: mongoose.Schema.Types.ObjectId;
 
   @Prop()
   address: string;
@@ -117,14 +60,28 @@ export class Customer extends Document {
 
 export const CustomerSchema = SchemaFactory.createForClass(Customer);
 
-// Populate 'featured_image' before 'find' and 'findOne' queries
+
+// CustomerSchema.methods.toJSON = function () {
+//   const obj = this.toObject();
+
+//   // delete obj.password; // Exclude password
+//   delete obj.access_token; // Optionally exclude tokens
+//   delete obj.refresh_token; // Optionally exclude tokens
+//   delete obj.otp;
+//   delete obj.otpExpiry;
+//   return obj;
+// };
+
 CustomerSchema.pre('find', function (next) {
-  this.populate('featured_image');
+  this.populate('featured_image') 
+  // this.populate("city")
   next();
 });
 
-// Ensure populate works for `findOne` queries too
 CustomerSchema.pre('findOne', function (next) {
-  this.populate('featured_image');
+  this.populate('featured_image') 
+  // this.populate("city")
+
   next();
 });
+

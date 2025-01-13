@@ -52,6 +52,8 @@ import { RegionModule } from './cms/region/region.module';
 import { CategoryModule } from './cms/category/category.module';
 import { EcommerceModule } from './modules/ecommerce/ecommerce.module';
 import { StatusModule } from './cms/status/status.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { SliderModule } from './cms/slider/slider.module';
 
 @Module({
   imports: [
@@ -68,6 +70,8 @@ import { StatusModule } from './cms/status/status.module';
     CategoryModule,
     StatusModule,
     EcommerceModule,
+    DashboardModule,
+    SliderModule,
   ],
   controllers: [AppController],
   providers: [AppService],

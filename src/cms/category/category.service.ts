@@ -17,8 +17,6 @@ export class CategoryService {
         @InjectModel('File') private readonly fileModel: Model<File>,
     ) { }
 
-
-
     async findAll(req, query?) {
         const updatedquery = { ...query, delete_at: null, };
 
@@ -44,7 +42,10 @@ export class CategoryService {
     }
 
     async findOne(req) {
-        return await CmsHelper.findOne(req, this.categoryModel);
+        const data= await CmsHelper.findOne(req, this.categoryModel);
+
+        return data
+        
     }
 
     async update(req, query?) {
@@ -108,5 +109,9 @@ export class CategoryService {
         return data;
     }
 
+
+    async search(req, query?) {
+        return await CmsHelper.search(req, this.categoryModel);
+    }
 
 }

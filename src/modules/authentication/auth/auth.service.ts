@@ -25,13 +25,13 @@ export class AuthService {
     @InjectModel(Customer.name) private customerModel: Model<Customer>,
 
     private jwtService: JwtService,
-  ) { 
+  ) {
 
-    const accountSid = process.env.TWILIO_ACCOUNT_SID
-    const authToken = process.env.TWILIO_AUTH_TOKEN
+    // const accountSid = process.env.TWILIO_ACCOUNT_SID
+    // const authToken = process.env.TWILIO_AUTH_TOKEN
 
-    this.twilioClient = new Twilio(accountSid, authToken);
- 
+    // this.twilioClient = new Twilio(accountSid, authToken);
+
   }
 
   async validateAdmin(email: string, password: string): Promise<any> {
@@ -59,7 +59,9 @@ export class AuthService {
       name: admin?.name,
       mobile: admin?.mobile,
       featured_image: admin?.featured_image,
+      role: admin?.role,
     };
+    
 
     return {
       access_token: this.jwtService.sign(payload),
@@ -67,8 +69,22 @@ export class AuthService {
     };
   }
 
-  async changePassword(admin: any, changePasswordDto: any) {
-    // return this.adminService.changePassword(admin.id, changePasswordDto);
+  async changePassword(req, query?) {
+
+    const { old_password, new_password } = req.body
+
+    const email = req?.auth?.mail;
+
+    const customerData: any = this.customerModel.findOne({ email }).select("+password")
+
+    console.log("customerData-=-=-=-", customerData);
+
+
+    if (customerData && (await bcrypt.compare(old_password, customerData.password))) {
+      return customerData;
+    }
+
+    return customerData;
   }
   async register(body: any) {
     const { otp, otpExpiry } = generateOtp();
@@ -102,13 +118,14 @@ export class AuthService {
 
     await this.customerModel.create({
       ...body,
-      otp: "1234",  // Or use `otp` from `generateOtp()` if needed
+      otp: otp,  // Or use `otp` from `generateOtp()` if needed
       password: hashedPassword,
       otpExpiry,
     });
-    console.log("-=-=-=-==-=-=body", body);
 
     if (body.email) {
+      await this.mailHelper.sendMailWithTemplate(body.email, "Your OTP", "otp", { otp, name: body.name });
+
       await this.mailHelper.sendMailWithTemplate(body.email, "Registration Successfully Done", "welcome-email", body);
     }
 
@@ -116,12 +133,11 @@ export class AuthService {
     return { message: 'OTP sent' };
   }
 
-
   async verifyOtp(email: string, otp: string) {
     const customer: any = await this.customerModel.findOne({ email });
 
-    const currentTime = new Date().getTime(); // Current time in milliseconds
-    const otpExpiryTime = new Date(customer?.otpExpiry).getTime(); // Customer OTP expiry time in milliseconds
+    const currentTime = new Date().getTime();
+    const otpExpiryTime = new Date(customer?.otpExpiry).getTime();
 
     if (!customer) {
       ResponseHelper.notFound('Invalid OTP', "400", "Invalid OTP provided or expired.");
@@ -142,6 +158,7 @@ export class AuthService {
       name: customer?.name,
       mobile: customer?.mobile,
       featured_image: customer?.featured_image,
+      role: customer?.role,
     };
 
 
@@ -161,17 +178,21 @@ export class AuthService {
   async update(otpData) {
     try {
 
-      console.log("otpData", otpData);
       const { email } = otpData;
 
       delete otpData.email;
+
+      if (email) {
+        await this.mailHelper.sendMailWithTemplate(email, "Your OTP", "otp", otpData);
+
+      }
       const updatedCustomer = await this.customerModel.findOneAndUpdate(
         { email }, // Find customer by email
         otpData,
         { new: true } // Return the updated document
       );
 
-      return ResponseHelper.success('success', 201, "OTP send successfully",);
+      return ResponseHelper.success('success', 201, "OTP successfully sent to your email",);
 
     } catch (error) {
       return ResponseHelper.conflict('error', "500", "Enternal server error");
@@ -179,21 +200,5 @@ export class AuthService {
     }
   }
 
-  // async sendOtp(phoneNumber: string) {
-  //   const serviceSid =process.env.TZTWILIO_VERIFICATION_SERVICE_SID
-  //   let msg = '';
-  //   await this.twilioClient.verify.v2
-  //     .services(serviceSid)
-  //     .verifications.create({ to: phoneNumber, channel: 'sms' })
-  //     .then((verification) => (msg = verification.status));
-  //   return { msg: msg };
-  // }
-  async sendOtp(to: string, message: string): Promise<any> {
-    const from = process.env.TWILIO_SENDER_PHONE_NUMBER
-    return this.twilioClient.messages.create({
-      body: message,
-      from,
-      to,
-    });
-  }
+
 }

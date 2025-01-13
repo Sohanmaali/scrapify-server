@@ -90,13 +90,10 @@ export class CmsHelper {
 
       }
 
-
       const name = data.name || data.title;
       if (!name) {
         throw new Error('Name or title is required to generate a slug');
       }
-
-
 
       if (req?.file) {
         const uploadedImages = await ImageUploadHelper(req, fileModel);
@@ -105,8 +102,7 @@ export class CmsHelper {
       }
 
 
-
-      if (req?.files.gallery && req?.files.gallery.length > 0) {
+      if (req?.files?.gallery && req?.files?.gallery?.length > 0) {
 
         const uploadedImages = await ImageUploadHelper(req, fileModel);
 
@@ -114,11 +110,24 @@ export class CmsHelper {
 
       }
 
-      if (req?.files.featured_image && req?.files.featured_image > 0) {
+      if (req?.files?.featured_image && req?.files?.featured_image > 0) {
 
         const uploadedImages = await ImageUploadHelper(req, fileModel);
 
         data.featured_image = uploadedImages;
+
+      }
+
+      if (req?.files?.slider && req?.files?.slider.length > 0) {
+        const uploadedImages = await ImageUploadHelper(req, fileModel);
+
+        const sliderData = uploadedImages.map((imageId, index) => ({
+          image: imageId,
+          heading: data[`slider[${index}][heading]`] || '',
+          details: data[`slider[${index}][details]`] || '',
+        }));
+
+        data.slider = sliderData;
 
       }
 
@@ -144,44 +153,92 @@ export class CmsHelper {
     try {
       const { id } = req.params;
       const data = req.body;
+
+
       if (!mongoose.Types.ObjectId.isValid(id)) {
         throw new Error('Invalid ID');
       }
-
       if (data?.children == "" || data?.children == null) {
         data.children = [];
 
       }
-      if (data.featured_image?._id) {
+
+      if (data?.featured_image?._id) {
         data.featured_image = new mongoose.Types.ObjectId(data.featured_image?._id)
       }
-      if (data?.city == "" || data?.city == null) {
-        data.city = null;
-
-      }
-      if (data?.country == "" || data?.country == null) {
-        data.country = null;
-
-      }
-      if (data?.state == "" || data?.state == null) {
-        data.state = null;
-
-      }
+     
 
       if (req?.file) {
-        const filePath = req?.file?.path;
-        const relativeFilePath = filePath.replace(process.cwd() + '\\public', '');
-        const imageData = {
-          destination: req?.file?.destination,
-          filename: req?.file?.filename,
-          filepath: relativeFilePath
-        }
+        const uploadedImages = await ImageUploadHelper(req, fileModel);
 
-        const fileData = await fileModel.create(imageData);
-        if (fileData) {
-          data.featured_image = fileData._id
+        data.featured_image = uploadedImages;
+      }
+
+
+      if (req?.files?.slider && req?.files?.slider.length > 0) {
+        try {
+          // Upload new images
+          const uploadedImages = await ImageUploadHelper(req, fileModel);
+
+          // Map uploaded images to slider data
+          const sliderData = uploadedImages.map((imageId, index) => ({
+            image: imageId, // Image ID from the upload
+            heading: data.slider[index]?.heading || '', // Heading from the client
+            details: data.slider[index]?.details || '', // Details from the client
+          }));
+
+
+          // Merge with existing slider data
+          data.slider = sliderData
+        } catch (error) {
+          console.error('Error uploading images:', error);
+          // Handle upload errors appropriately
+          // return res.status(500).json({ error: 'Failed to upload images' });
         }
       }
+      // Handle existing sliders
+      if (data?.exist_slider && data.exist_slider.length > 0) {
+        try {
+          const existingSliders = data.exist_slider.map((sliderString) => {
+            return JSON.parse(sliderString); // Parse JSON string
+          });
+
+          data.slider = data.slider ? [...data.slider, ...existingSliders] : existingSliders;
+        } catch (error) {
+          console.error('Failed to parse exist_slider:', error);
+        }
+      }
+      // ========================HANDLE GALLERY==============================
+      if (req?.files?.gallery && req?.files?.gallery.length > 0) {
+        try {
+          // Upload new images
+          const uploadedImages = await ImageUploadHelper(req, fileModel);
+
+          // Merge with existing gallery data
+          data.gallery = uploadedImages
+        } catch (error) {
+          console.error('Error uploading GAllery:', error);
+        }
+      }
+
+
+      // Handle existing gallerys
+      if (data?.exist_gallery && data?.exist_gallery.length > 0) {
+        try {
+          data.exist_gallery = JSON.parse(data.exist_gallery);
+          const existingGallery = data.exist_gallery.map((galleryString) => {
+            return JSON.parse(galleryString); // Parse JSON string
+          });
+
+          data.gallery = data.gallery ? [...data.gallery, ...existingGallery] : existingGallery;
+        } catch (error) {
+          console.error('Failed to parse exist_gallery:', error);
+        }
+      }
+
+      // Continue with your logic (e.g., save to database)
+
+      console.log("-=-==-=-=data=-=-=", data);
 
       const updatedEntry = await model.findByIdAndUpdate({ _id: id }, data, {
         new: true,
@@ -189,7 +246,6 @@ export class CmsHelper {
       if (!updatedEntry) {
         throw new Error('Entry not found');
       }
-      console.log('Entry updated:', updatedEntry);
       return updatedEntry;
     } catch (error) {
       console.error('Error updating entry:', error);
@@ -201,9 +257,8 @@ export class CmsHelper {
     try {
       // Extract search term from query parameters
       const { search } = req.query;
-      let query: any = { delete_at: null };
+      let query: any = { delete_at: null, parent: null };
 
-      // If a search term is provided, modify the query to include an $or condition
       if (search) {
         query.$or = [
           { name: { $regex: search, $options: 'i' } },
@@ -233,7 +288,6 @@ export class CmsHelper {
       if (!entry) {
         throw new Error('Entry not found');
       }
-      console.log('Entry retrieved:', entry);
       return entry;
     } catch (error) {
       console.error('Error retrieving entry:', error);
@@ -253,7 +307,6 @@ export class CmsHelper {
   static async multiRestore(req, model) {
     const ids = req.body.ids;
     const query = { delete_at: null };
-    console.log(ids);
 
     const data = await model.updateMany({ _id: { $in: ids } }, { $set: query });
     return data;

@@ -5,10 +5,13 @@ import { SettingSchema } from './entities/setting.schema';
 
 import { MongooseModule } from '@nestjs/mongoose';
 import { FrontdendSettingController } from './Frontendsetting.controller';
+import { FileSchema } from '../files/entities/file.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Setting', schema: SettingSchema }]), // Registering the Admin model
+    MongooseModule.forFeature([{ name: 'Setting', schema: SettingSchema },
+      { name: 'File', schema: FileSchema }
+    ]), // Registering the Admin model
   ],
   controllers: [SettingController,FrontdendSettingController],
   providers: [SettingService]
