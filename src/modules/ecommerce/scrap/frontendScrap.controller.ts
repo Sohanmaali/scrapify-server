@@ -40,7 +40,7 @@ export class FrontendScrapController {
     }
   }
 
-  @Get("assion")
+  @Get("assign-pickup")
   async getAssion(@Req() req, @Res() res) {
     try {
 
