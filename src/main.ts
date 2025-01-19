@@ -22,6 +22,8 @@ async function bootstrap() {
     origin: [
       '*',
       "https://scrapify-admin.vercel.app",
+      "https://scrapify-server-i1ge.onrender.com",
+      "https://scrapify-livb.onrender.com",
       'http://localhost:3003',
       'http://localhost:3005',
       'http://localhost:3000',
