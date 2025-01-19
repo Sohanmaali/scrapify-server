@@ -13,8 +13,6 @@ import { EcommerceModule } from './modules/ecommerce/ecommerce.module';
 import { StatusModule } from './cms/status/status.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { SliderModule } from './cms/slider/slider.module';
-// import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
 
 @Module({
   imports: [
@@ -41,7 +39,6 @@ import { join } from 'path';
 
 export class AppModule {
   constructor() {
-    console.log('app module loaded');
-    console.log('process.env.DB_URL:', process.env.PORT); // Check if this outputs the correct DB URL
+    console.log('process.env.DB_URL:', process.env.PORT); 
   }
 }

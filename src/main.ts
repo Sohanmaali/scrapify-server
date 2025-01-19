@@ -5,7 +5,7 @@ import * as express from 'express';
 import * as dotenv from 'dotenv';
 import { join } from 'path';
 import * as bodyParser from 'body-parser';
-import { CustomExceptionFilter } from '../src/cms/helper/custom-exception.filter';
+import { CustomExceptionFilter } from './cms/helper/custom-exception.filter';
 
 dotenv.config();
 
