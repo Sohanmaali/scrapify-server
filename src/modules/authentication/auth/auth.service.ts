@@ -61,7 +61,7 @@ export class AuthService {
       featured_image: admin?.featured_image,
       role: admin?.role,
     };
-    
+
 
     return {
       access_token: this.jwtService.sign(payload),
@@ -178,6 +178,7 @@ export class AuthService {
   async update(otpData) {
     try {
 
+      
       const { email } = otpData;
 
       delete otpData.email;

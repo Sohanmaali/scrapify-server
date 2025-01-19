@@ -73,14 +73,18 @@ export const CustomerSchema = SchemaFactory.createForClass(Customer);
 // };
 
 CustomerSchema.pre('find', function (next) {
-  this.populate('featured_image') 
-  // this.populate("city")
+  this.populate('featured_image')
+  this.populate("city")
+  this.populate("state")
+  this.populate("country")
   next();
 });
 
 CustomerSchema.pre('findOne', function (next) {
-  this.populate('featured_image') 
-  // this.populate("city")
+  this.populate('featured_image')
+  this.populate("city")
+  this.populate("state")
+  this.populate("country")
 
   next();
 });

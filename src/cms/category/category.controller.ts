@@ -115,8 +115,6 @@ export class CategoryController {
     async findAllByParent(@Req() req, @Res() res) {
         try {
 
-            console.error("-=-=-=-=", req.params.id);
-
             const query: any = { delete_at: null, parent: new mongoose.Types.ObjectId(req.params.id) };
 
             const data = await this.categoryService.findAll(req, query);

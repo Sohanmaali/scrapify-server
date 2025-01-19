@@ -19,9 +19,6 @@ export class Scrap extends Document {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Customer' })
   customer: MongooseSchema.Types.ObjectId;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Customer' })
-  employee: MongooseSchema.Types.ObjectId;
-
   @Prop({ default: null })
   description: string;
 

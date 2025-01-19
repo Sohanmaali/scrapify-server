@@ -38,7 +38,7 @@ export class CustomerService {
     return await CustomPagination(req, pipeline, this.customerModel);
 
   }
- 
+
 
   async create(req) {
     const data = await CmsHelper.create(req, this.customerModel, this.fileModel);
@@ -62,9 +62,8 @@ export class CustomerService {
   async updateProfile(req) {
     const filter = { _id: req.auth?._id };
     const update = { ...req.body };
-    console.log("-=-=-=-==-update", req.body);
 
-    delete update._id; // Remove _id from the update object
+    delete update._id;
     const options = { new: true, runValidators: true };
     if (update?.featured_image && typeof update?.featured_image === "string") {
       try {
@@ -74,16 +73,7 @@ export class CustomerService {
         // throw new Error("Invalid JSON format for featured_image");
       }
     }
-    // Check if delete_at is null
-    if (update.delete_at === 'null') {
-      update.delete_at = null;
-    }
-
-
-
     if (req?.file) {
-
-      console.log("=-=-=-=-==-==--==re", req?.file);
 
       const uploadedImages = await ImageUploadHelper(req, this.fileModel);
 
@@ -104,7 +94,7 @@ export class CustomerService {
 
   async search(req, query?) {
 
-    const data = await CmsHelper.search(req, this.customerModel);
+    const data = await CmsHelper.search(req, this.customerModel, query);
     return data;
   }
 

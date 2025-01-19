@@ -13,7 +13,7 @@ import { EcommerceModule } from './modules/ecommerce/ecommerce.module';
 import { StatusModule } from './cms/status/status.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { SliderModule } from './cms/slider/slider.module';
-import { ServeStaticModule } from '@nestjs/serve-static';
+// import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 
 @Module({

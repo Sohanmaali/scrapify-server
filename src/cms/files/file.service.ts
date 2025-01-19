@@ -4,20 +4,19 @@ import { Model } from 'mongoose';
 // import { Borrowing } from './entities/borrowing.schema';
 
 import { CmsHelper } from '../helper/cmsHelper';
-import { CustomPagination } from 'src/cms/helper/piplineHalper';
 import { File } from './entities/file.schema';
-// import { PaginationHelper } from 'src/cms/helper/piplineHalper';
+import { CustomPagination } from '../../cms/helper/piplineHalper';
 // import Pipli
 
 @Injectable()
 export class FileService {
-  constructor(@InjectModel('File') private readonly file: Model<File>) {}
+  constructor(@InjectModel('File') private readonly file: Model<File>) { }
 
   async create(req) {
     return await CmsHelper.create(req, this.file);
   }
 
-  async get(req) {
+  async getAll(req) {
     console.log('service');
     const query: any = { delete_at: null };
     const pipeline = [
@@ -29,7 +28,7 @@ export class FileService {
       },
     ];
 
-    return ''; // await CustomPagination(req,pipeline, this.borrowing);
+    return await CustomPagination(req, pipeline, this.file);
   }
 
   async update(req) {

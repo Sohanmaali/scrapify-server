@@ -8,9 +8,9 @@ export class FileController {
   constructor(private readonly fileService: FileService) {}
 
   @Get()
-  async get(@Req() req, @Res() res) {
+  async getAll(@Req() req, @Res() res) {
     try {
-      const data = { status: 'ghjklkjbn' }; //await this.fileService.get(req);
+      const data = await this.fileService.getAll(req);
 
       return res.status(201).json({
         status: 'success',

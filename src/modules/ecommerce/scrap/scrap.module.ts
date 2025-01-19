@@ -8,16 +8,21 @@ import { FileSchema } from '../../../cms/files/entities/file.schema';
 import { MailHelper } from '../../../cms/helper/mail.helper';
 import { FrontendScrapController } from './frontendScrap.controller';
 import { CustomerSchema } from '../../authentication/customer/entities/customer.schema';
+import { WorkSchema } from '../work/entities/work.schema';
 
 @Module({
- imports: [
-      MongooseModule.forFeature([{ name: 'Scrap', schema: ScrapSchema },{ name: 'File', schema: FileSchema },{ name: 'Customer', schema: CustomerSchema }]), 
-      MulterModule.register({
-        dest: '/', // Path where files will be stored
-      }),
-    ],
+  imports: [
+    MongooseModule.forFeature([
+      { name: 'Scrap', schema: ScrapSchema },
+      { name: 'File', schema: FileSchema },
+      { name: 'Work', schema: WorkSchema },
+      { name: 'Customer', schema: CustomerSchema }]),
+    MulterModule.register({
+      dest: '/',
+    }),
+  ],
 
-  providers: [ScrapService,MailHelper],
-  controllers: [ScrapController,FrontendScrapController]
+  providers: [ScrapService, MailHelper],
+  controllers: [ScrapController, FrontendScrapController]
 })
-export class ScrapModule {}
+export class ScrapModule { }

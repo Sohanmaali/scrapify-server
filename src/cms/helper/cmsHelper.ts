@@ -163,10 +163,10 @@ export class CmsHelper {
 
       }
 
-      if (data?.featured_image?._id) {
-        data.featured_image = new mongoose.Types.ObjectId(data.featured_image?._id)
+      if (data?.featured_image && typeof data?.featured_image === "string") {
+        data.featured_image = JSON.parse(data.featured_image);
       }
-     
+
 
       if (req?.file) {
         const uploadedImages = await ImageUploadHelper(req, fileModel);
@@ -253,14 +253,13 @@ export class CmsHelper {
     }
   }
 
-  static async search(req, model) {
+  static async search(req, model, query?) {
     try {
-      // Extract search term from query parameters
       const { search } = req.query;
-      let query: any = { delete_at: null, parent: null };
+      let updateQuery: any = { ...query, parent: null };
 
       if (search) {
-        query.$or = [
+        updateQuery.$or = [
           { name: { $regex: search, $options: 'i' } },
           { first_name: { $regex: search, $options: 'i' } },
           { mobile: { $regex: search, $options: 'i' } },
@@ -268,8 +267,8 @@ export class CmsHelper {
         ];
       }
 
-      // Execute the query to find matching documents
-      const data = await model.find(query);
+      // Execute the updateQuery to find matching documents
+      const data = await model.find(updateQuery);
       return data;
     } catch (error) {
       console.error('Error searching entry:', error);

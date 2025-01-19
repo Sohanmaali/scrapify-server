@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Scrap } from './entities/scrap.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { CustomPagination } from '../../../cms/helper/piplineHalper';
 import { CmsHelper } from '../../../cms/helper/cmsHelper';
 import { File } from '../../../cms/files/entities/file.schema';
 import { MailHelper } from '../../../cms/helper/mail.helper';
 import { Customer } from '../../authentication/customer/entities/customer.schema';
+import { Work } from '../work/entities/work.schema';
 
 @Injectable()
 export class ScrapService {
@@ -14,6 +15,7 @@ export class ScrapService {
     private readonly mailHelper: MailHelper,
     @InjectModel(Scrap.name) private scrapModel: Model<Scrap>,
     @InjectModel(Customer.name) private customerModel: Model<Customer>,
+    @InjectModel(Work.name) private workModel: Model<Work>,
     @InjectModel(File.name) private fileModel: Model<File>,
   ) { }
 
@@ -52,6 +54,17 @@ export class ScrapService {
         }
       },
       { $unwind: "$catagory" },
+
+      {
+        $lookup: {
+          from: 'customers',
+          localField: 'customer',
+          foreignField: '_id',
+          as: 'customer',
+        }
+      },
+      { $unwind: "$customer" },
+
       {
         $lookup: {
           from: 'status',
@@ -191,6 +204,7 @@ export class ScrapService {
   }
 
 
+  
 
   async findOne(req) {
     const id = req.params.id;
@@ -204,11 +218,21 @@ export class ScrapService {
   }
 
   async update(req) {
+
+    if (req.query.assign === "assign_work") {
+      this.workModel.create({
+        employee: new mongoose.Types.ObjectId(req.body.employee),
+        scrap: new mongoose.Types.ObjectId(req.body._id),
+        status: req.body.status,
+        admin: new mongoose.Types.ObjectId(req?.auth?._id),
+        assign_date: new Date()
+      })
+
+    }
+
     const data = await CmsHelper.update(req, this.scrapModel, this.fileModel);
-    if (req.body.status === process.env.PENDING_STATUS_ID) {
+    if (req.body.status === process.env.ACCEPT_STATUS_ID) {
       console.log("mail");
-
-
     }
     return data;
   }

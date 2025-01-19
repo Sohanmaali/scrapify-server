@@ -9,6 +9,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 @UseGuards(JwtCustomerGuard)
 @UseInterceptors(FileInterceptor('featured_image',)) // Use Multer at the class level
 
+
 export class CustomerController {
   constructor(private customerService: CustomerService) {
   }
@@ -32,7 +33,26 @@ export class CustomerController {
     }
   }
 
-  
+  @Get("employee")
+  async getAllEmployee(@Req() req, @Res() res) {
+    try {
+      const query: any = { delete_at: null, role: "employee" };
+      const data = await this.customerService.getAll(req, query);
+
+      return res.status(201).json({
+        status: 'success',
+        data: data,
+      });
+    } catch (error) {
+      console.error('error  ', error);
+      return res.status(500).json({
+        status: 'error',
+        data: error.message,
+      });
+    }
+  }
+
+
 
 
   @Post()
@@ -74,6 +94,25 @@ export class CustomerController {
       });
     }
   }
+  @Get("employee/search")
+  async EmployeeSearch(@Req() req, @Res() res) {
+    try {
+
+      const query: any = { delete_at: null, role: "employee" };
+      const data = await this.customerService.search(req, query);
+
+      return res.status(201).json({
+        status: 'success',
+        data: data,
+      });
+    } catch (error) {
+      console.error('error  ', error);
+      return res.status(500).json({
+        status: 'error',
+        data: error.message,
+      });
+    }
+  }
 
   @Get('show/:id')
   async findOne(@Req() req, @Res() res) {
@@ -97,7 +136,7 @@ export class CustomerController {
   @Patch('update/:id')
   async update(@Req() req, @Res() res) {
     try {
-     
+
       const data = await this.customerService.update(req);
 
       return res.status(201).json({
