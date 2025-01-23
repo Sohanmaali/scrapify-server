@@ -8,6 +8,8 @@ import { File } from '../../../cms/files/entities/file.schema';
 import { MailHelper } from '../../../cms/helper/mail.helper';
 import { Customer } from '../../authentication/customer/entities/customer.schema';
 import { Work } from '../work/entities/work.schema';
+import { ImageUploadHelper } from '../../../cms/helper/CloudinaryHelper';
+
 
 @Injectable()
 export class ScrapService {
@@ -186,10 +188,7 @@ export class ScrapService {
   async create(req) {
 
     req.body.status = process.env.PENDING_STATUS_ID
-
-    console.log("req.body", req.body);
-
-
+    req.body.module = "scrap"
     const data = await CmsHelper.create(req, this.scrapModel, this.fileModel);
 
     const newData: any = await this.scrapModel.findOne({ _id: data._id }).lean();
@@ -204,7 +203,7 @@ export class ScrapService {
   }
 
 
-  
+
 
   async findOne(req) {
     const id = req.params.id;
@@ -258,6 +257,46 @@ export class ScrapService {
   async multiDelete(req, query?) {
     const data = await CmsHelper.multiDelete(req, this.scrapModel);
     return data;
+  }
+
+
+  async upload(req) {
+    try {
+      const uploadResults = {};
+
+      // Handle single file for featured_image
+      if (req.files?.featured_image?.length) {
+
+        const uploadedFeaturedImage = await ImageUploadHelper(req, this.fileModel);
+        uploadResults['featured_image'] = uploadedFeaturedImage;
+      }
+
+      // Handle multiple files for gallery
+      if (req.files?.gallery?.length) {
+        const galleryPaths = req.files.gallery.map((file) => file.path); // Extract paths
+        const uploadedGallery =
+          ImageUploadHelper(req, this.fileModel)
+
+        uploadResults['gallery'] = uploadedGallery;
+      }
+
+      // Save to Scrap model or return upload results
+      const scrapData = {
+        featured_image: uploadResults['featured_image'],
+        gallery: uploadResults['gallery'] || [],
+        created_at: new Date(),
+      };
+
+      // const savedScrap = await this.scrapModel.create(scrapData);
+
+      return {
+        message: 'Files uploaded successfully',
+        data: { scrapData },
+      };
+    } catch (error) {
+      console.error('Error uploading files:', error.message);
+      throw new Error('Failed to upload files. Please try again.');
+    }
   }
 
 }

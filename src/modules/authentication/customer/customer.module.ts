@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CustomerSchema } from './entities/customer.schema';
 import { FileSchema } from '../../../cms/files/entities/file.schema';
 import { RegionSchema } from '../../../cms/region/entities/region.schema';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -13,6 +14,9 @@ import { RegionSchema } from '../../../cms/region/entities/region.schema';
       { name: 'File', schema: FileSchema },
       { name: 'Region', schema: RegionSchema },
     ]),
+    MulterModule.register({
+      dest: '/',
+    }),
   ],
   providers: [CustomerService],
   controllers: [CustomerController],

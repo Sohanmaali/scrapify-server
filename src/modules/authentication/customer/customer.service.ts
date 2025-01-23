@@ -7,7 +7,7 @@ import { CustomPagination } from '../../../cms/helper/piplineHalper';
 import { CmsHelper } from '../../../cms/helper/cmsHelper';
 import { ResponseHelper } from '../../../cms/helper/custom-exception.filter';
 import { File } from '../../../cms/files/entities/file.schema';
-import { ImageUploadHelper } from '../../../cms/helper/fileUploadHelper';
+import { ImageUploadHelper } from '../../../cms/helper/CloudinaryHelper';
 
 @Injectable()
 export class CustomerService {
@@ -63,6 +63,9 @@ export class CustomerService {
     const filter = { _id: req.auth?._id };
     const update = { ...req.body };
 
+
+      console.log("-=====-==-req.body-=-==-=", req.files);
+
     delete update._id;
     const options = { new: true, runValidators: true };
     if (update?.featured_image && typeof update?.featured_image === "string") {
@@ -73,7 +76,7 @@ export class CustomerService {
         // throw new Error("Invalid JSON format for featured_image");
       }
     }
-    if (req?.file) {
+    if (req?.files && Object.keys(req?.files).length > 0) {
 
       const uploadedImages = await ImageUploadHelper(req, this.fileModel);
 

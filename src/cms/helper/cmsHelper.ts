@@ -6,7 +6,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Buffer } from 'buffer';
 import { ensureUniqueSlug, generateSlug } from './slugHelper';
-import { ImageUploadHelper } from './fileUploadHelper';
+// import { ImageUploadHelper } from './fileUploadHelper';
+import { ImageUploadHelper } from './CloudinaryHelper';
+
 
 export class CmsHelper {
   constructor() { }

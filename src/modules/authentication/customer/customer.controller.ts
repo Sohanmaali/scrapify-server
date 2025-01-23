@@ -2,14 +2,18 @@ import { Controller, Get, Patch, Post, Req, Res, UseGuards, UseInterceptors } fr
 import { CustomerService } from './customer.service';
 import { JwtAuthGuard, JwtCustomerGuard } from '../auth/jwt-auth.guard';
 import { ResponseHelper } from '../../../cms/helper/custom-exception.filter';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 // import { ImageUploadHelper } from '../../../cms/helper/fileUploadHelper';
 
 @Controller('customer')
 @UseGuards(JwtCustomerGuard)
-@UseInterceptors(FileInterceptor('featured_image',)) // Use Multer at the class level
-
-
+@UseInterceptors(FileFieldsInterceptor
+  (
+    [
+      { name: 'featured_image', maxCount: 1 }, // Expect a single file for featured_image
+      { name: 'gallery', maxCount: 10 },       // Expect up to 10 files for gallery
+    ],
+  ))
 export class CustomerController {
   constructor(private customerService: CustomerService) {
   }

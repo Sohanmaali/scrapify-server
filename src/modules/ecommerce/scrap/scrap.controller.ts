@@ -82,6 +82,7 @@ import { ResponseHelper } from '../../../cms/helper/custom-exception.filter';
     }
 
   }
+
   @Get('trash')
   async getTrash(@Req() req, @Res() res) {
     try {
@@ -100,10 +101,9 @@ import { ResponseHelper } from '../../../cms/helper/custom-exception.filter';
       });
     }
   }
+
   @Patch('multi/trash')
   async multiTrash(@Req() req, @Res() res) {
-
-    console.log("-=-==-=-=-=-=-reqqqqqq==-=-=");
 
     const data = this.scrapService.multiTrash(req);
     return res.status(201).json({
@@ -128,6 +128,23 @@ import { ResponseHelper } from '../../../cms/helper/custom-exception.filter';
 
       const data = await this.scrapService.multiDelete(req);
 
+      return res.status(201).json({
+        status: 'success',
+        data: data,
+      });
+    } catch (error) {
+      console.log('error  ', error);
+      return res.status(500).json({
+        status: 'error',
+        data: error.message,
+      });
+    }
+  }
+
+  @Post('upload')
+  async upload(@Req() req, @Res() res) {
+    try {
+      const data = await this.scrapService.upload(req);
       return res.status(201).json({
         status: 'success',
         data: data,

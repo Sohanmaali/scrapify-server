@@ -16,7 +16,8 @@ import { WorkSchema } from '../work/entities/work.schema';
       { name: 'Scrap', schema: ScrapSchema },
       { name: 'File', schema: FileSchema },
       { name: 'Work', schema: WorkSchema },
-      { name: 'Customer', schema: CustomerSchema }]),
+      { name: 'Customer', schema: CustomerSchema }
+    ]),
     MulterModule.register({
       dest: '/',
     }),

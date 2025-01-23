@@ -21,6 +21,9 @@ export class File extends Document {
   @Prop({ default: null })
   module: string;
 
+  @Prop({ default: null })
+  public_id:string
+
   @Prop({ default: Date.now })
   create_at: Date;
 
