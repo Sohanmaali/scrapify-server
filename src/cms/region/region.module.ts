@@ -5,12 +5,15 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { RegionSchema } from './entities/region.schema';
 import { FileSchema } from '../../cms/files/entities/file.schema';
 import { FrontdendRegionController } from './Frontdendregion.controller';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'Region', schema: RegionSchema }, { name: 'File', schema: FileSchema }]), // Registering the Admin model
-  ],
-  controllers: [RegionController,FrontdendRegionController],
+    MulterModule.register({
+      dest: '/',
+    }),],
+  controllers: [RegionController, FrontdendRegionController],
   providers: [RegionService]
 })
 export class RegionModule { }

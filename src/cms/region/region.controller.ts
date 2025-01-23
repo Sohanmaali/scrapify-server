@@ -1,9 +1,17 @@
-import { Controller, Get, Injectable, Post, Req, Res } from '@nestjs/common';
+import { Controller, Get, Injectable, Post, Req, Res, UseInterceptors } from '@nestjs/common';
 import { RegionService } from './region.service';
 import mongoose from 'mongoose';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 // import { Types } from 'mongoose';
 
 @Controller('cms/region')
+@UseInterceptors(FileFieldsInterceptor
+  (
+    [
+      { name: 'featured_image', maxCount: 1 }, // Expect a single file for featured_image
+      { name: 'gallery', maxCount: 10 },       // Expect up to 10 files for gallery
+    ],
+  ))
 export class RegionController {
 
     constructor(

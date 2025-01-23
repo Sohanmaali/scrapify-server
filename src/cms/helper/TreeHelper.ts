@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { ImageUploadHelper } from "./fileUploadHelper";
+import { ImageUploadHelper } from "./CloudinaryHelper";
 
 
 export class TreeHelper {
