@@ -22,6 +22,7 @@ export class MailHelper {
                 pass: process.env.MAIL_PASS,
             },
         });
+       
     }
 
     async sendMailWithTemplate(
@@ -43,7 +44,7 @@ export class MailHelper {
             const html = compiledTemplate({ data: context });
 
             const info = await this.transporter.sendMail({
-                from: `"${process.env.SENDER_NAME}" <${process.env.SENDER_EMAIL}>`,
+                from: `"${process.env.SENDER_NAME}" ${process.env.SENDER_EMAIL}`,
                 to,
                 subject,
                 html,

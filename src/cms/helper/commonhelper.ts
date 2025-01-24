@@ -19,7 +19,7 @@ export const generateOtp = () => {
   let otp = Math.floor(1000 + Math.random() * 9000).toString();
   const otpExpiry = new Date();
 
-  otp = process.env.MODE == "local" ? "1234" : otp
+  otp = process.env.MODE !== "local" ? "1234" : otp
   otpExpiry.setMinutes(otpExpiry.getMinutes() + 1);
   return { otp, otpExpiry }
 }
