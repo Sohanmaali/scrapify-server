@@ -94,12 +94,12 @@
 import { v2 as cloudinary } from 'cloudinary';
 import * as dotenv from 'dotenv';
 
-dotenv.config(); // Load environment variables
+// dotenv.config(); // Load environment variables
 
-// Ensure environment variables are loaded (if not already)
-if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
-    throw new Error('Cloudinary environment variables are not set. Please check your .env file.');
-}
+// // Ensure environment variables are loaded (if not already)
+// if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+//     throw new Error('Cloudinary environment variables are not set. Please check your .env file.');
+// }
 
 // Configure Cloudinary
 cloudinary.config({
