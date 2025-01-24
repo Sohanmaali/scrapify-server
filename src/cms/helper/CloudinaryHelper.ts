@@ -94,7 +94,8 @@
 import { v2 as cloudinary } from 'cloudinary';
 import * as dotenv from 'dotenv';
 
-dotenv.config(); // Load environment variables
+dotenv.config();
+
 
 // Ensure environment variables are loaded (if not already)
 if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
