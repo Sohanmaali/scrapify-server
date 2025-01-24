@@ -97,7 +97,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 
-// Ensure environment variables are loaded (if not already)
+
 if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
     throw new Error('Cloudinary environment variables are not set. Please check your .env file.');
 }
