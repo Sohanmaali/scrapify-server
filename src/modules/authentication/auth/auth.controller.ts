@@ -43,7 +43,10 @@ export class AuthController {
     if (!req?.user?.isVerified) {
       const optData = generateOtp();
 
-      return await this.authService.update({ ...optData, _id: req?.user?._id });
+      console.log(req?.user);
+
+
+      return await this.authService.update({ ...optData, _id: req?.user?._id, email: req?.user?.email });
 
     }
 

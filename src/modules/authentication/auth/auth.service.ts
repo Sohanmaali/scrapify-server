@@ -178,21 +178,19 @@ export class AuthService {
   async update(otpData) {
     try {
 
-      
       const { email } = otpData;
 
       delete otpData.email;
-
+      
+      
       if (email) {
-        await this.mailHelper.sendMailWithTemplate(email, "Your OTP", "otp", otpData);
-
+        await this.mailHelper.sendMailWithTemplate(email, "Your OTP for login", "otp", otpData);
       }
       const updatedCustomer = await this.customerModel.findOneAndUpdate(
-        { email }, // Find customer by email
+        { email }, 
         otpData,
-        { new: true } // Return the updated document
+        { new: true }
       );
-
       return ResponseHelper.success('success', 201, "OTP successfully sent to your email",);
 
     } catch (error) {
