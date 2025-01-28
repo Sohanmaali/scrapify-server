@@ -16,26 +16,26 @@ export class RegionService {
     ) { }
 
 
-    // async findAll(req, query?) {
-    //     const resolveChildren = async (parentItems) => {
-    //         const populatedItems = await Promise.all(
-    //             parentItems.map(async (item) => {
-    //                 const children = await this.regionModel
-    //                     .find({ _id: { $in: item.children } })
-    //                     .lean();
-    //                 const populatedChildren = await resolveChildren(children);
+    async findAllCountry(req, query?) {
+        const resolveChildren = async (parentItems) => {
+            const populatedItems = await Promise.all(
+                parentItems.map(async (item) => {
+                    const children = await this.regionModel
+                        .find({ _id: { $in: item.children } })
+                        .lean();
+                    const populatedChildren = await resolveChildren(children);
 
-    //                 return { ...item, children: populatedChildren };
-    //             })
-    //         );
-    //         return populatedItems;
-    //     };
+                    return { ...item, children: populatedChildren };
+                })
+            );
+            return populatedItems;
+        };
 
-    //     const initialRegions = await this.regionModel.find(query).lean(); // Fetch top-level regions
-    //     const data = await resolveChildren(initialRegions); // Recursively populate children
+        const initialRegions = await this.regionModel.find(query).lean(); // Fetch top-level regions
+        const data = await resolveChildren(initialRegions); // Recursively populate children
 
-    //     return data;
-    // }
+        return data;
+    }
 
     async findAll(req, query?) {
 

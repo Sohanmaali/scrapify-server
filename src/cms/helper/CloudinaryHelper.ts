@@ -91,6 +91,81 @@ cloudinary.config({
 //     return result; // Return the result object containing IDs
 // };
 
+// export const ImageUploadHelper = async (req, fileModel) => {
+//     const uploadImage = async (file) => {
+//         const year = new Date().getFullYear();
+//         const monthNames = [
+//             'January', 'February', 'March', 'April', 'May', 'June',
+//             'July', 'August', 'September', 'October', 'November', 'December',
+//         ];
+//         const month = monthNames[new Date().getMonth()];
+
+//         const uploadPath = `images/${year}/${month}`;
+
+//         try {
+//             // Upload file to Cloudinary using file buffer
+//             const uploadResult: any = await cloudinary.uploader.upload_stream({
+//                 folder: uploadPath,
+//             }, (error, result) => {
+//                 if (error) {
+//                     console.error('Cloudinary upload failed:', error);
+//                     throw new Error('Failed to upload image to Cloudinary.');
+//                 }
+//                 return result;
+//             }).end(file.buffer); // Pass the file buffer here
+//             console.log("-=-=--==-=-uploadResult=-=-=-=", uploadResult);
+
+//             // Prepare file details for saving
+//             const fileDetails = {
+//                 destination: uploadPath,
+//                 filepath: uploadResult.secure_url,
+//                 filename: uploadResult?.secure_url?.split('/').pop(),
+//                 public_id: uploadResult.public_id,
+//                 mimeType: file.mimetype,
+//                 size: file.size,
+//                 module: req.body.module,
+//             };
+
+//             // Save file details to database
+//             const savedFile = await fileModel.create(fileDetails);
+//             return savedFile;
+//         } catch (error) {
+//             console.error('Cloudinary upload failed:', error);
+//             throw new Error('Failed to upload image to Cloudinary.');
+//         }
+//     };
+
+//     const processFiles = async (files) => {
+//         return await Promise.all(files.map((file) => uploadImage(file)));
+//     };
+
+//     let result = {};
+
+//     if (req.files?.featured_image) {
+//         const featuredImageFile = Array.isArray(req.files.featured_image)
+//             ? req.files.featured_image[0]
+//             : req.files.featured_image;
+
+//         const featuredImageData: any = await uploadImage(featuredImageFile);
+//         return featuredImageData._id;
+//     }
+
+//     if (req.files?.gallery) {
+//         const galleryFiles = req.files.gallery;
+//         const galleryImages = await processFiles(galleryFiles);
+//         result = galleryImages.map((file) => file._id); // Store IDs as an array
+//     }
+
+//     if (req.files?.slider) {
+//         const sliderFiles = req.files.slider;
+//         const sliderImages = await processFiles(sliderFiles);
+//         result = sliderImages.map((file) => file._id); // Store IDs as an array
+//     }
+
+//     return result; // Return the result object containing IDs
+// };
+
+
 export const ImageUploadHelper = async (req, fileModel) => {
     const uploadImage = async (file) => {
         const year = new Date().getFullYear();
@@ -104,21 +179,21 @@ export const ImageUploadHelper = async (req, fileModel) => {
 
         try {
             // Upload file to Cloudinary using file buffer
-            const uploadResult: any = await cloudinary.uploader.upload_stream({
-                folder: uploadPath,
-            }, (error, result) => {
-                if (error) {
-                    console.error('Cloudinary upload failed:', error);
-                    throw new Error('Failed to upload image to Cloudinary.');
+            const uploadResult = await cloudinary.uploader.upload(
+                `data:${file.mimetype};base64,${file.buffer.toString('base64')}`,
+                {
+                    folder: uploadPath,
+                    resource_type: 'auto', // auto will allow image, video, etc.
                 }
-                return result;
-            }).end(file.buffer); // Pass the file buffer here
+            );
+
+            // console.log("-=-=--==-=-uploadResult=-=-=-=", uploadResult);
 
             // Prepare file details for saving
             const fileDetails = {
                 destination: uploadPath,
                 filepath: uploadResult.secure_url,
-                filename: uploadResult.secure_url.split('/').pop(),
+                filename: uploadResult?.secure_url?.split('/').pop(),
                 public_id: uploadResult.public_id,
                 mimeType: file.mimetype,
                 size: file.size,
@@ -145,7 +220,7 @@ export const ImageUploadHelper = async (req, fileModel) => {
             ? req.files.featured_image[0]
             : req.files.featured_image;
 
-        const featuredImageData: any = await uploadImage(featuredImageFile);
+        const featuredImageData = await uploadImage(featuredImageFile);
         return featuredImageData._id;
     }
 

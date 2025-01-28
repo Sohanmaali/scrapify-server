@@ -58,14 +58,11 @@ export class RegionController {
             });
         }
     }
-    @Get("/:type")
+    @Get("/country")
     async findAllCountry(@Req() req, @Res() res) {
         try {
-
-
-
-            const query: any = { delete_at: null, type: req.params.type };
-            const data = await this.regionService.findByType(req, query);
+            const query: any = { delete_at: null, type: "country" };
+            const data = await this.regionService.findAllCountry(req, query);
 
             return res.status(201).json({
                 status: 'success',
@@ -81,7 +78,7 @@ export class RegionController {
     }
 
 
-    
+
 
     // @Get()
     // async findType(@Req() req, @Res() res) {
