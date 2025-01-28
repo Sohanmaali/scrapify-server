@@ -36,6 +36,24 @@ export class RegionController {
             });
         }
     }
+    @Get("/country")
+    async findAllCountry(@Req() req, @Res() res) {
+        try {
+            const query: any = { delete_at: null, type: "country" };
+            const data = await this.regionService.findAllCountry(req, query);
+
+            return res.status(201).json({
+                status: 'success',
+                data: data,
+            });
+        } catch (error) {
+            console.error('error  ', error);
+            return res.status(500).json({
+                status: 'error',
+                data: error.message,
+            });
+        }
+    }
 
     @Get("/:type")
     async findType(@Req() req, @Res() res) {
@@ -58,24 +76,7 @@ export class RegionController {
             });
         }
     }
-    @Get("/country")
-    async findAllCountry(@Req() req, @Res() res) {
-        try {
-            const query: any = { delete_at: null, type: "country" };
-            const data = await this.regionService.findAllCountry(req, query);
 
-            return res.status(201).json({
-                status: 'success',
-                data: data,
-            });
-        } catch (error) {
-            console.error('error  ', error);
-            return res.status(500).json({
-                status: 'error',
-                data: error.message,
-            });
-        }
-    }
 
 
 

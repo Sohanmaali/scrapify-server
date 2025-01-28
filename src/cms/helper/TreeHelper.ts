@@ -25,52 +25,34 @@ export class TreeHelper {
 
   }
 
-  // static async findAllCategory(req, pipeline = [], modal) {
-
-  //     pipeline.push({
-  //         $lookup: {
-  //             from: 'categories',
-  //             localField: 'children',
-  //             foreignField: '_id',
-  //             as: 'children',
-  //         },
-  //     },);
-
-  //     return await modal.aggregate(pipeline);
-
-  // }
-
   static async findAllCategory(req, pipeline = [], modal) {
-    // Step 1: Populate the 'children' field by looking up the categories
+
     pipeline.push({
       $lookup: {
-        from: 'categories', // The collection for categories
-        localField: 'children', // The field in the current document
-        foreignField: '_id', // The field in the 'categories' collection
-        as: 'children', // The output field
+        from: 'categories', 
+        localField: 'children',
+        foreignField: '_id', 
+        as: 'children', 
       },
     });
 
-    // Step 2: Unwind the 'children' array to process each child individually
     pipeline.push({
       $unwind: {
         path: '$children',
-        preserveNullAndEmptyArrays: true, // Ensures documents without children are not excluded
+        preserveNullAndEmptyArrays: true, 
       },
     });
 
-    // Step 3: Populate 'featured_image' for each child category
     pipeline.push({
       $lookup: {
-        from: 'files', // The collection for images/files
-        localField: 'children.featured_image', // The field in the 'children' document
-        foreignField: '_id', // The field in the 'files' collection
-        as: 'children.featured_image', // The output field
+        from: 'files', 
+        localField: 'children.featured_image', 
+        foreignField: '_id', 
+        as: 'children.featured_image',
       },
     });
 
-    // Step 4: Unwind the 'featured_image' array (if required, as it may be an array)
-    pipeline.push({
+     pipeline.push({
       $unwind: {
         path: '$children.featured_image',
         preserveNullAndEmptyArrays: true, // Allows documents without featured images
@@ -98,11 +80,6 @@ export class TreeHelper {
     // Execute the aggregation pipeline
     return await modal.aggregate(pipeline);
   }
-
-
-
-
-
 
   static async update(req, model, fileModel?) {
     try {

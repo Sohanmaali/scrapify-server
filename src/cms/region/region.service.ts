@@ -16,25 +16,36 @@ export class RegionService {
     ) { }
 
 
-    async findAllCountry(req, query?) {
-        const resolveChildren = async (parentItems) => {
-            const populatedItems = await Promise.all(
-                parentItems.map(async (item) => {
-                    const children = await this.regionModel
-                        .find({ _id: { $in: item.children } })
-                        .lean();
-                    const populatedChildren = await resolveChildren(children);
 
-                    return { ...item, children: populatedChildren };
-                })
-            );
-            return populatedItems;
-        };
 
-        const initialRegions = await this.regionModel.find(query).lean(); // Fetch top-level regions
-        const data = await resolveChildren(initialRegions); // Recursively populate children
+    // Function to find all countries and populate children
+    async findAllCountry(req: any, query: any) {
 
-        return data;
+        return await this.regionModel
+            .find(query)
+            .populate('children')  // Populate the first level of children
+            .exec();
+
+        // Recursively populate children
+
+        // console.log("-=-=-=-==---==-countries-==-", countries[0]?.children);
+
+        // return this.populateChildren(countries);
+    }
+
+    // Recursive function to populate children dynamically
+    private async populateChildren(countries) {
+        for (let country of countries) {
+            if (country.children && country.children.length > 0) {
+                country.children = await this.regionModel
+                    .populate(country.children, {
+                        path: 'regions',
+                    });
+
+                country.children = await this.populateChildren(country.children);
+            }
+        }
+        return countries;
     }
 
     async findAll(req, query?) {
