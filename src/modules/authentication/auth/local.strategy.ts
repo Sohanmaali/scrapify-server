@@ -22,7 +22,7 @@ export class AdminLocalStrategy extends PassportStrategy(Strategy, "admin-local"
     return admin;
   }
 }
-
+  
 
 @Injectable()
 export class CustomerLocalStrategy extends PassportStrategy(Strategy, "customer-local") {

@@ -30,7 +30,7 @@ export class Region extends Document {
 export const RegionSchema = SchemaFactory.createForClass(Region);
 
 RegionSchema.pre('find', function (next) {
-  // this.populate('children');
+  this.populate('children');
   // this.populate('featured_image');
 
   next();
@@ -38,7 +38,7 @@ RegionSchema.pre('find', function (next) {
 
 // Ensure populate works for `findOne` queries too
 RegionSchema.pre('findOne', function (next) {
-  // this.populate('children');
+  this.populate('children');
   // this.populate('featured_image');
 
   next();

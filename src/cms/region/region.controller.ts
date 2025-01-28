@@ -6,12 +6,12 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @Controller('cms/region')
 @UseInterceptors(FileFieldsInterceptor
-  (
-    [
-      { name: 'featured_image', maxCount: 1 }, // Expect a single file for featured_image
-      { name: 'gallery', maxCount: 10 },       // Expect up to 10 files for gallery
-    ],
-  ))
+    (
+        [
+            { name: 'featured_image', maxCount: 1 }, // Expect a single file for featured_image
+            { name: 'gallery', maxCount: 10 },       // Expect up to 10 files for gallery
+        ],
+    ))
 export class RegionController {
 
     constructor(
@@ -58,6 +58,30 @@ export class RegionController {
             });
         }
     }
+    @Get("/:type")
+    async findAllCountry(@Req() req, @Res() res) {
+        try {
+
+
+
+            const query: any = { delete_at: null, type: req.params.type };
+            const data = await this.regionService.findByType(req, query);
+
+            return res.status(201).json({
+                status: 'success',
+                data: data,
+            });
+        } catch (error) {
+            console.error('error  ', error);
+            return res.status(500).json({
+                status: 'error',
+                data: error.message,
+            });
+        }
+    }
+
+
+    
 
     // @Get()
     // async findType(@Req() req, @Res() res) {

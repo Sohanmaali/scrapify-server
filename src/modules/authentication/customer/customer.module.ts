@@ -6,6 +6,8 @@ import { CustomerSchema } from './entities/customer.schema';
 import { FileSchema } from '../../../cms/files/entities/file.schema';
 import { RegionSchema } from '../../../cms/region/entities/region.schema';
 import { MulterModule } from '@nestjs/platform-express';
+import multer from 'multer';
+// import * as multer from 'multer';
 
 @Module({
   imports: [
@@ -14,8 +16,11 @@ import { MulterModule } from '@nestjs/platform-express';
       { name: 'File', schema: FileSchema },
       { name: 'Region', schema: RegionSchema },
     ]),
+    // MulterModule.register({
+    //   dest: '/',
+    // }),
     MulterModule.register({
-      dest: '/',
+      storage: multer.memoryStorage(), // Use memory storage
     }),
   ],
   providers: [CustomerService],
