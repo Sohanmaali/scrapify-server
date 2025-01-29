@@ -22,14 +22,14 @@ export class MailHelper {
                 pass: process.env.MAIL_PASS,
             },
         });
-       
+
     }
 
-    async sendMailWithTemplate(
+    async sendMail(
         to: string,
         subject: string,
         templateName: string,
-        context: object
+        context: any
     ): Promise<void> {
         try {
             const templatePath = path.join(__dirname, '..', '../template', `${templateName}.hbs`);
@@ -41,6 +41,11 @@ export class MailHelper {
             const template = fs.readFileSync(templatePath, 'utf8');
             const compiledTemplate = handlebars.compile(template);
 
+            context.Year = new Date().getFullYear();
+            context.AppLogo = process.env.APP_LOGO || 'AppLogo'
+            context.AppName = process.env.APP_NAME || 'AppName'
+            context.AdminEmail = process.env.ADMIN_EMAIL || 'AdminEmail'
+            context.AppUrl = process.env.APP_URL || 'App_Url'
             const html = compiledTemplate({ data: context });
 
             const info = await this.transporter.sendMail({
@@ -53,7 +58,6 @@ export class MailHelper {
             console.log('Email sent:', info.messageId);
         } catch (error) {
             console.error('Error sending email:', error);
-            // throw error;
         }
     }
 }

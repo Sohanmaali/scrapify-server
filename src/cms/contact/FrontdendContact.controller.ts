@@ -1,19 +1,20 @@
 import { Controller, Post, Req, Res } from '@nestjs/common';
-import { WorkService } from './work.service';
+import { ContactService } from './contact.service';
 
-@Controller('ecommerce/work')
-export class WorkController {
+@Controller('public/contact')
+export class FrontdendContactController {
 
-    constructor(private readonly workService: WorkService) { }
+    constructor(private readonly contactService: ContactService) { }
 
-    @Post()
+    @Post('create')
     async create(@Req() req, @Res() res,) {
+
         try {
-            const data = await this.workService.create(req);
+            const data = await this.contactService.create(req);
             return res.status(201).json({
                 status: 'success',
                 data: data,
-
+                
             });
         } catch (error) {
             console.error('Error:', error);

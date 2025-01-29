@@ -17,6 +17,7 @@ export class SliderService {
 
     async create(req) {
         try {
+            req.body.module = "Slider";
             return CmsHelper.create(req, this.sliderModel, this.fileModel)
 
         } catch (error) {

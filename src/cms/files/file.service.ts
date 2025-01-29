@@ -24,7 +24,7 @@ export class FileService {
         $match: query,
       },
       {
-        $sort: { created_at: -1 },
+        $sort: { create_at: -1 },
       },
     ];
 

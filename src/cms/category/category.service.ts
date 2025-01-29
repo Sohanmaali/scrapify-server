@@ -23,6 +23,9 @@ export class CategoryService {
         const pipeline = [
             { $match: updatedquery },
             {
+                $sort: { createdAt: -1 },
+            },
+            {
                 $lookup: {
                     from: 'files',
                     localField: 'featured_image',
@@ -42,10 +45,10 @@ export class CategoryService {
     }
 
     async findOne(req) {
-        const data= await CmsHelper.findOne(req, this.categoryModel);
+        const data = await CmsHelper.findOne(req, this.categoryModel);
 
         return data
-        
+
     }
 
     async update(req, query?) {
@@ -72,22 +75,23 @@ export class CategoryService {
     // }
 
     async create(req, query?) {
+
+
         if (Array.isArray(req.body.name)) {
             const createdEntries = await Promise.all(
                 req.body.name.map(async (name) => {
 
-                    let slug = generateSlug(name); // Generate slug
-                    slug = await ensureUniqueSlug(slug, this.categoryModel); // Ensure slug is unique
-
+                    let slug = generateSlug(name);
+                    slug = await ensureUniqueSlug(slug, this.categoryModel);
 
                     const data = { ...req.body, name, slug };
-
+                    req.body.module = "Category";
 
                     const createdEntry = await CmsHelper.create({ body: data }, this.categoryModel);
                     if (req.body.parent) {
                         await this.categoryModel.updateMany(
                             { _id: req.body.parent },
-                            { $push: { children: createdEntry._id } } // Use $push to append the value to the array
+                            { $push: { children: createdEntry._id } }
                         );
                     }
 

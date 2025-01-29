@@ -13,11 +13,13 @@ import { EcommerceModule } from './modules/ecommerce/ecommerce.module';
 import { StatusModule } from './cms/status/status.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { SliderModule } from './cms/slider/slider.module';
+import { ContactModule } from './cms/contact/contact.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      
     }),
     MongooseModule.forRoot(process.env.DB_URL, {
       serverSelectionTimeoutMS: 20000,
@@ -31,6 +33,7 @@ import { SliderModule } from './cms/slider/slider.module';
     EcommerceModule,
     DashboardModule,
     SliderModule,
+    ContactModule,
   ],
   controllers: [AppController],
   providers: [AppService],

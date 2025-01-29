@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 
 @Schema({ timestamps: true })
-export class Work extends Document {
+export class TaskManager extends Document {
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Customer' })
   employee: MongooseSchema.Types.ObjectId;
@@ -19,21 +19,22 @@ export class Work extends Document {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Admin' })
   admin: MongooseSchema.Types.ObjectId
 
+  
 }
 
-export const WorkSchema = SchemaFactory.createForClass(Work);
+export const TaskManagerSchema = SchemaFactory.createForClass(TaskManager);
 
-WorkSchema.pre('find', function (next) {
-this.populate('employee');
-this.populate('scrap');
+// TaskManagerSchema.pre('find', function (next) {
+// this.populate('employee');
+// this.populate('scrap');
 
-  next();
-});
+//   next();
+// });
 
 
-WorkSchema.pre('findOne', function (next) {
-  this.populate('employee');
-  this.populate('scrap');
-  next();
-});
+// TaskManagerSchema.pre('findOne', function (next) {
+//   this.populate('employee');
+//   this.populate('scrap');
+//   next();
+// });
 

@@ -124,13 +124,13 @@ export class AuthService {
     });
 
     if (body.email) {
-      await this.mailHelper.sendMailWithTemplate(body.email, "Your OTP", "otp", { otp, name: body.name });
+      await this.mailHelper.sendMail(body.email, "Your OTP for login", "otp", { otp, name: body.name });
 
-      await this.mailHelper.sendMailWithTemplate(body.email, "Registration Successfully Done", "welcome-email", body);
+      await this.mailHelper.sendMail(body.email, "Registration Successfully ", "welcome-email", body);
     }
 
 
-    return { message: 'OTP sent' };
+    return { message: 'OTP successfully sent to your email' };
   }
 
   async verifyOtp(email: string, otp: string) {
@@ -184,7 +184,7 @@ export class AuthService {
       
       
       if (email) {
-        await this.mailHelper.sendMailWithTemplate(email, "Your OTP for login", "otp", otpData);
+        await this.mailHelper.sendMail(email, "Your OTP for login", "otp", otpData);
       }
       const updatedCustomer = await this.customerModel.findOneAndUpdate(
         { email }, 

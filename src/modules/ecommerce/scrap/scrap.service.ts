@@ -7,7 +7,7 @@ import { CmsHelper } from '../../../cms/helper/cmsHelper';
 import { File } from '../../../cms/files/entities/file.schema';
 import { MailHelper } from '../../../cms/helper/mail.helper';
 import { Customer } from '../../authentication/customer/entities/customer.schema';
-import { Work } from '../work/entities/work.schema';
+// import { TaskManager } from '../taskmanager/entities/taskmanger.schema'
 import { ImageUploadHelper } from '../../../cms/helper/CloudinaryHelper';
 
 
@@ -17,7 +17,7 @@ export class ScrapService {
     private readonly mailHelper: MailHelper,
     @InjectModel(Scrap.name) private scrapModel: Model<Scrap>,
     @InjectModel(Customer.name) private customerModel: Model<Customer>,
-    @InjectModel(Work.name) private workModel: Model<Work>,
+    // @InjectModel(TaskManager.name) private taskManagerModel: Model<TaskManager>,
     @InjectModel(File.name) private fileModel: Model<File>,
   ) { }
 
@@ -26,9 +26,9 @@ export class ScrapService {
       {
         $match: query,
       },
-      // {
-      //   $sort: { created_at: -1 },
-      // },
+      {
+        $sort: { createdAt: -1 },
+      },
       {
         $lookup: {
           from: 'files',
@@ -194,10 +194,9 @@ export class ScrapService {
     const newData: any = await this.scrapModel.findOne({ _id: data._id }).lean();
 
     if (newData?.customer?.email) {
-      await this.mailHelper.sendMailWithTemplate(newData?.customer?.email, "Request Send Successfully", "scrap-sell-req", newData);
+      await this.mailHelper.sendMail(newData?.customer?.email, "Request Send Successfully", "scrap-sell-req", newData);
     }
-    await this.mailHelper.sendMailWithTemplate(process.env.ADMIN_EMAIL, `${newData?.customer?.name} Send Request For Scrap Sell`, "scrap-sell-req", newData);
-
+    await this.mailHelper.sendMail(process.env.ADMIN_EMAIL, `${newData?.customer?.name} Send Request For Scrap Sell`, "scrap-sell-req", newData);
 
     return newData;
   }
@@ -218,16 +217,16 @@ export class ScrapService {
 
   async update(req) {
 
-    if (req.query.assign === "assign_work") {
-      this.workModel.create({
-        employee: new mongoose.Types.ObjectId(req.body.employee),
-        scrap: new mongoose.Types.ObjectId(req.body._id),
-        status: req.body.status,
-        admin: new mongoose.Types.ObjectId(req?.auth?._id),
-        assign_date: new Date()
-      })
+    // if (req.query.assign === "assign_work") {
+    //   this.taskManagerModel.create({
+    //     employee: new mongoose.Types.ObjectId(req.body.employee),
+    //     scrap: new mongoose.Types.ObjectId(req.body._id),
+    //     status: req.body.status,
+    //     admin: new mongoose.Types.ObjectId(req?.auth?._id),
+    //     assign_date: new Date()
+    //   })
 
-    }
+    // }
 
     const data = await CmsHelper.update(req, this.scrapModel, this.fileModel);
     if (req.body.status === process.env.ACCEPT_STATUS_ID) {
@@ -287,7 +286,6 @@ export class ScrapService {
         created_at: new Date(),
       };
 
-      // const savedScrap = await this.scrapModel.create(scrapData);
 
       return {
         message: 'Files uploaded successfully',

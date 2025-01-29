@@ -8,18 +8,19 @@ import { FileSchema } from '../../../cms/files/entities/file.schema';
 import { MailHelper } from '../../../cms/helper/mail.helper';
 import { FrontendScrapController } from './frontendScrap.controller';
 import { CustomerSchema } from '../../authentication/customer/entities/customer.schema';
-import { WorkSchema } from '../work/entities/work.schema';
+import multer from 'multer';
+// import { TaskManager } from '../taskmanager/entities/taskmanger.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: 'Scrap', schema: ScrapSchema },
       { name: 'File', schema: FileSchema },
-      { name: 'Work', schema: WorkSchema },
+      // { name: 'TaskManager', schema: TaskManager },
       { name: 'Customer', schema: CustomerSchema }
     ]),
     MulterModule.register({
-      dest: '/',
+      storage: multer.memoryStorage(), // Use memory storage
     }),
   ],
 

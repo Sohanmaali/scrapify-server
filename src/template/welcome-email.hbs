@@ -1,98 +1,102 @@
-<!-- templates/registration-email.hbs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome Email</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+     background-color: #ffffff; /* White background */
+      color: #282828; /* Dark gray text */
+      text-align: center;
+      padding: 20px;
+      border-bottom: 3px solid #309255; /* Green border */
+  
+    }
+    .header img {
+      width: 100px; /* Adjust logo size as needed */
+      height: auto;
+    }
+    .content {
+      padding: 20px;
+      color: #282828;
+      line-height: 1.6;
+    }
+    .content h2 {
+      color: #309255;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .content p {
+      margin: 0 0 15px;
+    }
+    .cta-button {
+      display: inline-block;
+      background-color: #309255;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+    .footer {
+      text-align: center;
+      padding: 15px;
+      background-color: #f4f4f4;
+      color: #0a0a0a;
+      font-size: 12px;
+    }
+    .footer a {
+      color: #309255;
+      text-decoration: none;
+    }
+    .heading{
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <!-- Header Section with Logo -->
+    <div class="header">
+      <img src="{{data.AppUrl}}" alt="Scrapify Logo">
+    
+    </div>
 
-<html lang='en'>
+    <!-- Content Section -->
+    <div class="content">
+    <h2 class="heading">Welcome to {{data.AppName}}! 🎉</h2>
+      <h3>Hi {{data.name}},</h3>
+      <p>Welcome to <strong>Scrapify</strong>! We're thrilled to have you join our community. </p>
+      <p>Now that you're registered, you can:</p>
+      <ul>
+        <li><strong>Sell</strong> your scrap materials or handmade products.</li>
+        <li><strong>Browse</strong> and <strong>buy</strong> unique items from other users.</li>
+        <li><strong>Manage</strong> your orders and track pickups seamlessly.</li>
+      </ul>
+      <p>If you have any questions or need assistance, feel free to reach out to us at <a href="{{data.AdminEmail}}">{{data.AdminEmail}}</a>.</p>
+      <a href="{{actionLink}}" class="cta-button">Get Started</a>
+    </div>
 
-  <head>
-    <meta charset='UTF-8' />
-    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
-    <title>{{subject}}</title>
-    <style>
-      body { font-family: Arial, sans-serif; background-color: #f9f9f9; color:
-      #333; margin: 0; padding: 0; } table { width: 100%; max-width: 600px;
-      margin: 20px auto; border-collapse: collapse; background-color: #ffffff;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); } h1 { color: #4CAF50;
-      text-align: center; font-size: 24px; margin-bottom: 20px; } p { font-size:
-      16px; line-height: 1.5; margin-bottom: 20px; text-align: center; } footer
-      { background-color: #4CAF50; color: white; text-align: center; padding:
-      10px 0; font-size: 12px; } footer p { margin: 0; } .container { padding:
-      20px; } .btn { display: inline-block; background-color: #4CAF50; color:
-      white; padding: 12px 25px; text-decoration: none; border-radius: 5px;
-      text-align: center; font-size: 16px; margin-top: 20px; } .btn:hover {
-      background-color: #45a049; } .social-icons { text-align: center;
-      margin-top: 20px; } .social-icons a { display: inline-block; margin: 0
-      10px; text-decoration: none; } .social-icons img { width: 24px; height:
-      24px; } tr{ text-align: center;}
-    </style>
-  </head>
-
-  <body>
-    <table style='border: #45a049 2px solid;'>
-      <tr>
-        <td class='container'>
-
-          <h1>Welcome, {{data.name}}!</h1>
-        </td>
-      </tr>
-      <tr>
-        <td class='container'>
-
-          <h1>APP LOGO</h1>
-        </td>
-      </tr>
-      <tr>
-        <td>
-
-          <p>Thank you for registering with us. We're excited to have you on
-            board!</p>
-        </td>
-      </tr>
-      <tr>
-        <td>
-
-          <p>To sell your old item please click on the button below:</p>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <a href='{{actionLink}}' class='btn'>Now You can sell your Scrap</a>
-        </td>
-      </tr>
-      <tr>
-        <td>
-
-          <div class='social-icons'>
-            <p>Follow us on social media:</p>
-            <a href='https://facebook.com/yourcompany' target='_blank'>
-              <img
-                src='https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg'
-                alt='Facebook'
-              />
-            </a>
-            <a href='https://twitter.com/yourcompany' target='_blank'>
-              <img
-                src='https://upload.wikimedia.org/wikipedia/commons/6/60/Twitter_logo_2012.svg'
-                alt='Twitter'
-              />
-            </a>
-            <a href='https://instagram.com/yourcompany' target='_blank'>
-              <img
-                src='https://upload.wikimedia.org/wikipedia/commons/9/95/Instagram_logo_2022.svg'
-                alt='Instagram'
-              />
-            </a>
-          </div>
-        </td>
-
-      </tr>
-      <tr>
-        <td>
-          <footer>
-            <p>&copy; 2025 scrapify. All rights reserved.</p>
-          </footer>
-        </td>
-      </tr>
-    </table>
-
-  </body>
-
+    <!-- Footer Section -->
+    <div class="footer">
+      <p>Thank you for choosing <strong>{{data.AppName}}</strong>. We’re excited to help you turn scrap into treasure! 💎</p>
+      <p>&copy; {{data.Year}} {{data.AppName}}. All rights reserved.</p>
+    </div>
+  </div>
+</body>
 </html>

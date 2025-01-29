@@ -63,8 +63,7 @@ export class CustomerService {
     const filter = { _id: req.auth?._id };
     const update = { ...req.body };
 
-
-      console.log("-=====-==-req.body-=-==-=", req.files);
+    req.body.module = "Profile";
 
     delete update._id;
     const options = { new: true, runValidators: true };
@@ -77,6 +76,7 @@ export class CustomerService {
       }
     }
     if (req?.files && Object.keys(req?.files).length > 0) {
+
 
       const uploadedImages = await ImageUploadHelper(req, this.fileModel);
 

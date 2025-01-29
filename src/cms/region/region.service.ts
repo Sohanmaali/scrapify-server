@@ -26,28 +26,7 @@ export class RegionService {
             .populate('children')  // Populate the first level of children
             .exec();
 
-        // Recursively populate children
-
-        // console.log("-=-=-=-==---==-countries-==-", countries[0]?.children);
-
-        // return this.populateChildren(countries);
     }
-
-    // Recursive function to populate children dynamically
-    private async populateChildren(countries) {
-        for (let country of countries) {
-            if (country.children && country.children.length > 0) {
-                country.children = await this.regionModel
-                    .populate(country.children, {
-                        path: 'regions',
-                    });
-
-                country.children = await this.populateChildren(country.children);
-            }
-        }
-        return countries;
-    }
-
     async findAll(req, query?) {
 
         const updatedquery = { ...query, delete_at: null, };
@@ -83,6 +62,7 @@ export class RegionService {
     }
 
     async create(req, query?) {
+        req.body.module = "Region";
         if (Array.isArray(req.body.name)) {
             const createdEntries = await Promise.all(
                 req.body.name.map(async (name) => {
