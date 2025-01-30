@@ -42,10 +42,6 @@ export class AuthController {
 
     if (!req?.user?.isVerified) {
       const optData = generateOtp();
-
-      console.log(req?.user);
-
-
       return await this.authService.update({ ...optData, _id: req?.user?._id, email: req?.user?.email });
 
     }
@@ -85,7 +81,33 @@ export class AuthController {
       console.error('Error:', error);
       return res.status(500).json(ResponseHelper.unauthorized("error", "500", error?.details || error?.message || "Internal server error"));
     }
+  }
 
+  @Post('customer/forgot-password')
+  async forgotPassword(@Req() req, @Res() res) {
+    try {
+      const data: any = await this.authService.findByEmail(req);
+      return res.status(201).json(ResponseHelper.success('success', 201, data?.message,));
+
+    } catch (error) {
+      console.error('Error:', error);
+      return res.status(500).json(ResponseHelper.unauthorized("error", "500", error?.details || error?.message || "Internal server error"));
+    }
+  }
+
+  @Post('customer/update-password')
+  async updatePassword(@Req() req, @Res() res) {
+    try {
+
+      const query: any = { delete_at: null };
+
+      const data = await this.authService.updatePassword(req, query);
+      return res.status(201).json(ResponseHelper.success('success', 201, data, "data"));
+
+    } catch (error) {
+      console.error('Error:', error);
+      return res.status(500).json(ResponseHelper.unauthorized("error", "500", error?.details || error?.message || "Internal server error"));
+    }
   }
 
   // @Post('/SendOtp')

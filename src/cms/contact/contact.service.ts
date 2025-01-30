@@ -18,10 +18,9 @@ export class ContactService {
 
     async create(req) {
         const data = await CmsHelper.create(req, this.contactModel);
-        if (data?.email) {
-            const plainData = data.toObject ? data.toObject() : data; // Convert if it's a Mongoose document
-            await this.mailHelper.sendMail(plainData.email, "Your Contact Inquiry", "contact-Inquiry", plainData);
-        }
+
+        const plainData = data.toObject ? data.toObject() : data; // Convert if it's a Mongoose document
+        await this.mailHelper.sendMail(process.env.ADMIN_EMAIL, "Your Contact Inquiry", "contact-Inquiry", plainData);
 
         return data;
     }

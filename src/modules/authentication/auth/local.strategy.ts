@@ -22,7 +22,7 @@ export class AdminLocalStrategy extends PassportStrategy(Strategy, "admin-local"
     return admin;
   }
 }
-  
+
 
 @Injectable()
 export class CustomerLocalStrategy extends PassportStrategy(Strategy, "customer-local") {
@@ -32,8 +32,6 @@ export class CustomerLocalStrategy extends PassportStrategy(Strategy, "customer-
   }
 
   async validate(email: string, password: string): Promise<any> {
-    console.log("-==-==-=-==-", email, password);
-
 
     const customer = await this.authService.validateCustomer(email, password);
     return customer;

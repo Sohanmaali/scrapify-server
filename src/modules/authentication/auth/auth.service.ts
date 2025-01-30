@@ -77,9 +77,6 @@ export class AuthService {
 
     const customerData: any = this.customerModel.findOne({ email }).select("+password")
 
-    console.log("customerData-=-=-=-", customerData);
-
-
     if (customerData && (await bcrypt.compare(old_password, customerData.password))) {
       return customerData;
     }
@@ -118,7 +115,7 @@ export class AuthService {
 
     await this.customerModel.create({
       ...body,
-      otp: otp,  // Or use `otp` from `generateOtp()` if needed
+      otp: otp,
       password: hashedPassword,
       otpExpiry,
     });
@@ -174,20 +171,19 @@ export class AuthService {
 
   }
 
-
   async update(otpData) {
     try {
 
       const { email } = otpData;
 
       delete otpData.email;
-      
-      
+
+
       if (email) {
         await this.mailHelper.sendMail(email, "Your OTP for login", "otp", otpData);
       }
       const updatedCustomer = await this.customerModel.findOneAndUpdate(
-        { email }, 
+        { email },
         otpData,
         { new: true }
       );
@@ -199,5 +195,37 @@ export class AuthService {
     }
   }
 
+  async findByEmail(req) {
+    const user: any = await this.customerModel.findOne({
+      email: req?.body?.email, delete_at: null,
+      // status: 'active'
+    });
+
+    if (!user) {
+      ResponseHelper.notFound('error', "404", "user not found");
+    }
+    const { otp, otpExpiry } = generateOtp();
+    user.otp = otp;
+    user.otpExpiry = otpExpiry;
+
+    return await this.update({ email: req?.body?.email, otp, otpExpiry });
+
+  }
+
+  async updatePassword(req, query) {
+    const { password } = req.body;
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const result: any = await this.customerModel.updateOne(
+      { email: req.body.email, delete_at: null, }, // Filter query
+      { $set: { password: hashedPassword } }
+    );
+
+    if (result.nModified === 0) {
+      throw new Error("User not found or password not updated");
+    }
+    return "Password updated successfully"
+  }
 
 }
