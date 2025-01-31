@@ -11,7 +11,10 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "incremental": true, 
+    "paths": {
+      "src/*": ["./src/*"]
+    },
+    "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
     "noImplicitAny": false,
@@ -22,4 +25,4 @@
   },
   "assets": ["template/**/*"],
   "watchAssets": true
-}                     
+}

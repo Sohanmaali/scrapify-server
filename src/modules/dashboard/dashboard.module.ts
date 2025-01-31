@@ -4,19 +4,20 @@ import { DashboardController } from './dashboard.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CustomerSchema } from '../authentication/customer/entities/customer.schema';
 import { ScrapSchema } from '../ecommerce/scrap/entities/scrap.schema';
-// import { BillSchema } from '../bill/entities/bill.schema';
-// import { Customer, CustomerSchema } from './entities/customer.schema';
+import { FrontendDashboardController } from './frontendDashboard.controller';
+import { CatgorySchema } from '../../cms/category/entities/category.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: 'Customer', schema: CustomerSchema },
-      { name: 'Scrap', schema: ScrapSchema }
+      { name: 'Scrap', schema: ScrapSchema },
+      { name: 'Category', schema: CatgorySchema }
 
-    ]), // Registering the Customer model
+    ]),
   ],
   providers: [DashboardService],
-  controllers: [DashboardController],
-  exports: [DashboardService], // Export CustomerService if needed in other modules
+  controllers: [DashboardController, FrontendDashboardController],
+  exports: [DashboardService],
 })
 export class DashboardModule { }

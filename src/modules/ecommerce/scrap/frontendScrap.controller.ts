@@ -22,7 +22,7 @@ import { JwtAuthGuard, JwtCustomerGuard } from '../../../modules/authentication/
 export class FrontendScrapController {
   constructor(private readonly scrapService: ScrapService) { }
 
-
+x
   @Post()
   async create(@Req() req, @Res() res,) {
     try {

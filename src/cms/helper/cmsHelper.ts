@@ -258,11 +258,12 @@ export class CmsHelper {
   static async search(req, model, query?) {
     try {
       const { search } = req.query;
-      let updateQuery: any = { ...query, parent: null };
+      let updateQuery: any = { ...query, delete_at: null };
 
       if (search) {
         updateQuery.$or = [
           { name: { $regex: search, $options: 'i' } },
+          { slug: { $regex: search, $options: 'i' } },
           { first_name: { $regex: search, $options: 'i' } },
           { mobile: { $regex: search, $options: 'i' } },
           { email: { $regex: search, $options: 'i' } },

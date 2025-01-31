@@ -29,30 +29,30 @@ export class TreeHelper {
 
     pipeline.push({
       $lookup: {
-        from: 'categories', 
+        from: 'categories',
         localField: 'children',
-        foreignField: '_id', 
-        as: 'children', 
+        foreignField: '_id',
+        as: 'children',
       },
     });
 
     pipeline.push({
       $unwind: {
         path: '$children',
-        preserveNullAndEmptyArrays: true, 
+        preserveNullAndEmptyArrays: true,
       },
     });
 
     pipeline.push({
       $lookup: {
-        from: 'files', 
-        localField: 'children.featured_image', 
-        foreignField: '_id', 
+        from: 'files',
+        localField: 'children.featured_image',
+        foreignField: '_id',
         as: 'children.featured_image',
       },
     });
 
-     pipeline.push({
+    pipeline.push({
       $unwind: {
         path: '$children.featured_image',
         preserveNullAndEmptyArrays: true, // Allows documents without featured images
@@ -108,7 +108,7 @@ export class TreeHelper {
         data.featured_image = uploadedImages;
       }
 
-      console.log("-=-===-=-=-=11111111111=--=-=-",req?.files?.featured_image );
+      console.log("-=-===-=-=-=11111111111=--=-=-", req?.files?.featured_image);
 
       if (req?.files?.featured_image && req?.files?.featured_image.length > 0) {
 

@@ -36,7 +36,7 @@ export class CategoryService {
             {
                 $unwind: {
                     path: '$featured_image',
-                    preserveNullAndEmptyArrays: true, // this will ensure that if no image is found, it doesn't remove the document
+                    preserveNullAndEmptyArrays: true,
                 },
             },
         ];

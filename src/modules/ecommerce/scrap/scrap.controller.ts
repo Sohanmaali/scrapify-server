@@ -11,7 +11,7 @@ import { ResponseHelper } from '../../../cms/helper/custom-exception.filter';
     [
       { name: 'featured_image', maxCount: 1 }, // Expect a single file for featured_image
       { name: 'gallery', maxCount: 10 },       // Expect up to 10 files for gallery
-    ],
+    ], 
   )
 ) export class ScrapController {
   constructor(private readonly scrapService: ScrapService) { }

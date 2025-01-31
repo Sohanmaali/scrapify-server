@@ -24,17 +24,12 @@ export class TaskManager extends Document {
 
 export const TaskManagerSchema = SchemaFactory.createForClass(TaskManager);
 
-// TaskManagerSchema.pre('find', function (next) {
-// this.populate('employee');
-// this.populate('scrap');
+TaskManagerSchema.pre('find', function (next) {
 
-//   next();
-// });
+  this.populate('employee');
+  this.populate('scrap');
+ 
 
-
-// TaskManagerSchema.pre('findOne', function (next) {
-//   this.populate('employee');
-//   this.populate('scrap');
-//   next();
-// });
+  next();
+});
 

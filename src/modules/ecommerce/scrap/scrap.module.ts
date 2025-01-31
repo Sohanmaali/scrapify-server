@@ -9,6 +9,8 @@ import { MailHelper } from '../../../cms/helper/mail.helper';
 import { FrontendScrapController } from './frontendScrap.controller';
 import { CustomerSchema } from '../../authentication/customer/entities/customer.schema';
 import multer from 'multer';
+import { TaskManager, TaskManagerSchema } from '../task-manager/entities/tastManager.schema';
+// import { TaskManagerService } from '../task-manager/TaskManager.service';
 // import { TaskManager } from '../taskmanager/entities/taskmanger.schema';
 
 @Module({
@@ -16,7 +18,7 @@ import multer from 'multer';
     MongooseModule.forFeature([
       { name: 'Scrap', schema: ScrapSchema },
       { name: 'File', schema: FileSchema },
-      // { name: 'TaskManager', schema: TaskManager },
+      { name: 'TaskManager', schema: TaskManagerSchema },
       { name: 'Customer', schema: CustomerSchema }
     ]),
     MulterModule.register({
