@@ -7,7 +7,6 @@ export class StatusController {
     constructor(
         private readonly statusService: StatusService
     ) { }
-
     @Get()
     async findAll(@Req() req, @Res() res) {
         try {

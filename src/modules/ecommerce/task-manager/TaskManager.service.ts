@@ -7,13 +7,14 @@ import { MailHelper } from '../../../cms/helper/mail.helper';
 import { CustomPagination } from '../../../cms/helper/piplineHalper';
 @Injectable()
 export class TaskManagerService {
+  constructor(
+    private readonly mailHelper: MailHelper,
+    @InjectModel(TaskManager.name) private taskManagerModel: Model<TaskManager>,
+  ) {}
 
+  async findAllTaskByUserId(req, query?) {
+    console.log('========query=======', query);
 
-    constructor(
-        private readonly mailHelper: MailHelper,
-        @InjectModel(TaskManager.name) private taskManagerModel: Model<TaskManager>,
-    ) { }
-      async findAllTaskByUserId(req, query?) {
-        return this.taskManagerModel.find();
-      }
+    return this.taskManagerModel.find();
+  }
 }

@@ -26,12 +26,9 @@ export class AuthService {
 
     private jwtService: JwtService,
   ) {
-
     // const accountSid = process.env.TWILIO_ACCOUNT_SID
     // const authToken = process.env.TWILIO_AUTH_TOKEN
-
     // this.twilioClient = new Twilio(accountSid, authToken);
-
   }
 
   async validateAdmin(email: string, password: string): Promise<any> {
@@ -46,7 +43,7 @@ export class AuthService {
   async validateCustomer(email: string, password: string): Promise<any> {
     const admin = await this.customerService.validateCustomer(email, password);
     if (!admin) {
-      ResponseHelper.notFound('error', "404", "user not found");
+      ResponseHelper.notFound('error', '404', 'user not found');
     }
 
     return admin;
@@ -63,19 +60,23 @@ export class AuthService {
     };
     return {
       access_token: this.jwtService.sign(payload),
-      user: payload
+      user: payload,
     };
   }
 
   async changePassword(req, query?) {
-
-    const { old_password, new_password } = req.body
+    const { old_password, new_password } = req.body;
 
     const email = req?.auth?.mail;
 
-    const customerData: any = this.customerModel.findOne({ email }).select("+password")
+    const customerData: any = this.customerModel
+      .findOne({ email })
+      .select('+password');
 
-    if (customerData && (await bcrypt.compare(old_password, customerData.password))) {
+    if (
+      customerData &&
+      (await bcrypt.compare(old_password, customerData.password))
+    ) {
       return customerData;
     }
 
@@ -86,22 +87,23 @@ export class AuthService {
 
     // Check if email or mobile exists
     const existingCustomer = await this.customerModel.findOne({
-      $or: [
-        { email: body.email },
-        { mobile: body.mobile },
-      ],
+      $or: [{ email: body.email }, { mobile: body.mobile }],
     });
 
     if (existingCustomer) {
       // If email exists
       if (existingCustomer.email === body.email) {
-        ResponseHelper.conflict('error', "1100", "Email already exists");
+        ResponseHelper.conflict('error', '1100', 'Email already exists');
         return;
       }
 
       // If mobile exists
       if (existingCustomer.mobile === body.mobile) {
-        ResponseHelper.conflict('error', "1100", "Mobile number already exists");
+        ResponseHelper.conflict(
+          'error',
+          '1100',
+          'Mobile number already exists',
+        );
         return;
       }
     }
@@ -119,11 +121,18 @@ export class AuthService {
     });
 
     if (body.email) {
-      await this.mailHelper.sendMail(body.email, "Your OTP for login", "otp", { otp, name: body.name });
+      await this.mailHelper.sendMail(body.email, 'Your OTP for login', 'otp', {
+        otp,
+        name: body.name,
+      });
 
-      await this.mailHelper.sendMail(body.email, "Registration Successfully ", "welcome-email", body);
+      await this.mailHelper.sendMail(
+        body.email,
+        'Registration Successfully ',
+        'welcome-email',
+        body,
+      );
     }
-
 
     return { message: 'OTP successfully sent to your email' };
   }
@@ -135,16 +144,18 @@ export class AuthService {
     const otpExpiryTime = new Date(customer?.otpExpiry).getTime();
 
     if (!customer) {
-      ResponseHelper.notFound('Invalid OTP', "400", "Invalid OTP provided or expired.");
-      return
+      ResponseHelper.notFound(
+        'Invalid OTP',
+        '400',
+        'Invalid OTP provided or expired.',
+      );
+      return;
     }
     if (customer.otp != otp) {
-      ResponseHelper.notFound('Invalid OTP', "400", 'Invalid OTP provided');
-
+      ResponseHelper.notFound('Invalid OTP', '400', 'Invalid OTP provided');
     }
     if (currentTime >= otpExpiryTime) {
-      ResponseHelper.notFound('Invalid OTP', "400", 'OTP expired');
-
+      ResponseHelper.notFound('Invalid OTP', '400', 'OTP expired');
     }
 
     const payload = {
@@ -156,58 +167,61 @@ export class AuthService {
       role: customer?.role,
     };
 
-
-    await this.customerModel.updateOne(
-      { email },
-      { isVerified: true }
-    );
-    return ResponseHelper.success('success', 201, "login success", {
-      access_token: this.jwtService.sign({ id: customer._id, email, mobile: customer.mobile }),
+    await this.customerModel.updateOne({ email }, { isVerified: true });
+    return ResponseHelper.success('success', 201, 'login success', {
+      access_token: this.jwtService.sign({
+        id: customer._id,
+        email,
+        mobile: customer.mobile,
+      }),
       user: payload,
-
     });
-
   }
 
   async update(otpData) {
     try {
-
       const { email } = otpData;
 
       delete otpData.email;
 
-
       if (email) {
-        await this.mailHelper.sendMail(email, "Your OTP for login", "otp", otpData);
+        await this.mailHelper.sendMail(
+          email,
+          'Your OTP for login',
+          'otp',
+          otpData,
+        );
       }
       const updatedCustomer = await this.customerModel.findOneAndUpdate(
         { email },
         otpData,
-        { new: true }
+        { new: true },
       );
-      return ResponseHelper.success('success', 201, "OTP successfully sent to your email",);
-
+      return ResponseHelper.success(
+        'success',
+        201,
+        'OTP successfully sent to your email',
+      );
     } catch (error) {
-      return ResponseHelper.conflict('error', "500", "Enternal server error");
-
+      return ResponseHelper.conflict('error', '500', 'Enternal server error');
     }
   }
 
   async findByEmail(req) {
     const user: any = await this.customerModel.findOne({
-      email: req?.body?.email, delete_at: null,
+      email: req?.body?.email,
+      delete_at: null,
       // status: 'active'
     });
 
     if (!user) {
-      ResponseHelper.notFound('error', "404", "user not found");
+      ResponseHelper.notFound('error', '404', 'user not found');
     }
     const { otp, otpExpiry } = generateOtp();
     user.otp = otp;
     user.otpExpiry = otpExpiry;
 
     return await this.update({ email: req?.body?.email, otp, otpExpiry });
-
   }
 
   async updatePassword(req, query) {
@@ -216,14 +230,13 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const result: any = await this.customerModel.updateOne(
-      { email: req.body.email, delete_at: null, }, // Filter query
-      { $set: { password: hashedPassword } }
+      { email: req.body.email, delete_at: null }, // Filter query
+      { $set: { password: hashedPassword } },
     );
 
     if (result.nModified === 0) {
-      throw new Error("User not found or password not updated");
+      throw new Error('User not found or password not updated');
     }
-    return "Password updated successfully"
+    return 'Password updated successfully';
   }
-
 }

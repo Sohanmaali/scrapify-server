@@ -41,7 +41,10 @@ lerna-debug.log*
 .env.test.local
 .env.production.local
 .env.local
+<<<<<<< HEAD
 server.env
+=======
+>>>>>>> ee08701fa79150d54ee0d3f062a9e5455cb53049
 
 # temp directory
 .temp
@@ -57,5 +60,8 @@ pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 .vercel
+<<<<<<< HEAD
 server.env
 server.env
+=======
+>>>>>>> ee08701fa79150d54ee0d3f062a9e5455cb53049

@@ -13,13 +13,12 @@ import { ContactSchema } from '../../cms/contact/entities/contact.schema';
     MongooseModule.forFeature([
       { name: 'Customer', schema: CustomerSchema },
       { name: 'Scrap', schema: ScrapSchema },
+      { name: 'Contact', schema: ContactSchema },
       { name: 'Category', schema: CatgorySchema },
-      { name: 'Contact', schema: ContactSchema }
-
     ]),
   ],
   providers: [DashboardService],
   controllers: [DashboardController, FrontendDashboardController],
   exports: [DashboardService],
 })
-export class DashboardModule { }
+export class DashboardModule {}

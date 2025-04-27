@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
-import * as mongoosePaginate from 'mongoose-paginate-v2';
 
+import * as mongoosePaginate from 'mongoose-paginate-v2';
 @Schema({ timestamps: true }) // Automatically manage createdAt and updatedAt
 export class Scrap extends Document {
 

@@ -38,9 +38,6 @@ async function bootstrap() {
       'http://192.168.111.92:3005',
       "http://192.168.210.92:3000",
       "http://192.168.210.92:3005",
-      "http://192.168.34.92:3000",
-      "http://192.168.34.92:3005",
-
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
@@ -50,6 +47,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+
 
   app.use(bodyParser.json({ limit: '50mb' }));
   app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
