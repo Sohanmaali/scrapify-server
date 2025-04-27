@@ -17,8 +17,7 @@ import mongoose from 'mongoose';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService
-  ) { }
+  constructor(private authService: AuthService) {}
 
   @UseGuards(AuthGuard('admin-local'))
   @Post('admin/login')
@@ -26,23 +25,23 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
-
   // ==============================================CUSTOMER START==============================================
-
 
   @Post('customer/register')
   async customerRegister(@Body() body: any) {
     return await this.authService.register(body);
-
   }
 
   @UseGuards(AuthGuard('customer-local'))
   @Post('customer/login')
   async Customerlogin(@Req() req) {
-
     if (!req?.user?.isVerified) {
       const optData = generateOtp();
-      return await this.authService.update({ ...optData, _id: req?.user?._id, email: req?.user?.email });
+      return await this.authService.update({
+        ...optData,
+        _id: req?.user?._id,
+        email: req?.user?.email,
+      });
     }
 
     return this.authService.login(req.user);
@@ -51,17 +50,14 @@ export class AuthController {
   @Post('customer/verify')
   async verifyOtp(@Body() body: { email: string; otp: string }) {
     return this.authService.verifyOtp(body.email, body.otp);
-
   }
 
   @Post('customer/resend-otp')
   async resendOtp(@Req() req) {
-
     const optData = generateOtp();
     const data = await this.authService.update({ ...optData, ...req.body });
 
-    return data
-
+    return data;
   }
 
   @Patch('change-password')
@@ -69,16 +65,30 @@ export class AuthController {
   async changePassword(@Req() req, @Res() res) {
     try {
       if (!req?.auth?._id) {
-        return res.status(500).json(ResponseHelper.unauthorized("error", "500", "please login"));
+        return res
+          .status(500)
+          .json(ResponseHelper.unauthorized('error', '500', 'please login'));
       }
-      const query: any = { delete_at: null, customer: new mongoose.Types.ObjectId(req?.auth?._id) };
+      const query: any = {
+        delete_at: null,
+        customer: new mongoose.Types.ObjectId(req?.auth?._id),
+      };
 
       const data = await this.authService.changePassword(req, query);
-      return res.status(201).json(ResponseHelper.success('success', 201, "Data found", "data"));
-
+      return res
+        .status(201)
+        .json(ResponseHelper.success('success', 201, 'Data found', 'data'));
     } catch (error) {
       console.error('Error:', error);
-      return res.status(500).json(ResponseHelper.unauthorized("error", "500", error?.details || error?.message || "Internal server error"));
+      return res
+        .status(500)
+        .json(
+          ResponseHelper.unauthorized(
+            'error',
+            '500',
+            error?.details || error?.message || 'Internal server error',
+          ),
+        );
     }
   }
 
@@ -86,26 +96,43 @@ export class AuthController {
   async forgotPassword(@Req() req, @Res() res) {
     try {
       const data: any = await this.authService.findByEmail(req);
-      return res.status(201).json(ResponseHelper.success('success', 201, data?.message,));
-
+      return res
+        .status(201)
+        .json(ResponseHelper.success('success', 201, data?.message));
     } catch (error) {
       console.error('Error:', error);
-      return res.status(500).json(ResponseHelper.unauthorized("error", "500", error?.details || error?.message || "Internal server error"));
+      return res
+        .status(500)
+        .json(
+          ResponseHelper.unauthorized(
+            'error',
+            '500',
+            error?.details || error?.message || 'Internal server error',
+          ),
+        );
     }
   }
 
   @Post('customer/update-password')
   async updatePassword(@Req() req, @Res() res) {
     try {
-
       const query: any = { delete_at: null };
 
       const data = await this.authService.updatePassword(req, query);
-      return res.status(201).json(ResponseHelper.success('success', 201, data, "data"));
-
+      return res
+        .status(201)
+        .json(ResponseHelper.success('success', 201, data, 'data'));
     } catch (error) {
       console.error('Error:', error);
-      return res.status(500).json(ResponseHelper.unauthorized("error", "500", error?.details || error?.message || "Internal server error"));
+      return res
+        .status(500)
+        .json(
+          ResponseHelper.unauthorized(
+            'error',
+            '500',
+            error?.details || error?.message || 'Internal server error',
+          ),
+        );
     }
   }
 
@@ -121,7 +148,4 @@ export class AuthController {
   //   const { to, message } = body;
   //   return this.authService.sendOtp(to, message);
   // }
-
 }
-
-

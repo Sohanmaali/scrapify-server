@@ -9,113 +9,128 @@ import { ensureUniqueSlug, generateSlug } from '../../cms/helper/slugHelper';
 import { TreeHelper } from '../../cms/helper/TreeHelper';
 import { File } from '../../cms/files/entities/file.schema';
 
-
 @Injectable()
 export class CategoryService {
-    constructor(
-        @InjectModel('Category') private readonly categoryModel: Model<Category>,
-        @InjectModel('File') private readonly fileModel: Model<File>,
-    ) { }
+  constructor(
+    @InjectModel('Category') private readonly categoryModel: Model<Category>,
+    @InjectModel('File') private readonly fileModel: Model<File>,
+  ) {}
 
-    async findAll(req, query?) {
-        const updatedquery = { ...query, delete_at: null, };
+  async findOne(req) {
+    const data = await CmsHelper.findOne(req, this.categoryModel);
 
-        const pipeline = [
-            { $match: updatedquery },
-            {
-                $sort: { createdAt: -1 },
-            },
-            {
-                $lookup: {
-                    from: 'files',
-                    localField: 'featured_image',
-                    foreignField: '_id',
-                    as: 'featured_image',
-                },
-            },
-            {
-                $unwind: {
-                    path: '$featured_image',
-                    preserveNullAndEmptyArrays: true,
-                },
-            },
-        ];
+    return data;
+  }
 
-        return await TreeHelper.findAllCategory(req, pipeline, this.categoryModel);
-    }
+  async update(req, query?) {
+    return await TreeHelper.update(req, this.categoryModel, this.fileModel);
+  }
+  async delete(req) {
+    return `This action removes a #${'id'} region`;
+  }
 
-    async findOne(req) {
-        const data = await CmsHelper.findOne(req, this.categoryModel);
+  async create(req, query?) {
+    const { body } = req;
+    console.log('-=-==-=-=-body-=-=', body);
 
-        return data
+    if (body?.type === 'other') {
+      try {
+        let slug = generateSlug(body.other);
+        slug = await ensureUniqueSlug(slug, this.categoryModel);
 
-    }
-
-    async update(req, query?) {
-        return await TreeHelper.update(req, this.categoryModel, this.fileModel);
-    }
-    async delete(req) {
-        return `This action removes a #${"id"} region`;
-    }
-    // async create(req, query?) {
-
-    //     if (Array.isArray(req.body.name)) {
-    //         const createdEntries = await Promise.all(
-    //             req.body.name.map(async (name) => {
-    //                 const data = { ...req.body, name }; 
-    //                 return await CmsHelper.create({ body: data }, this.categoryModel);
-    //             })
-    //         );
-
-    //         return createdEntries; // Return all created entries
-    //     } else {
-    //         // Handle the case where `name` is not an array
-    //         return await CmsHelper.create(req, this.categoryModel);
-    //     }
-    // }
-
-    async create(req, query?) {
-
+        // Create the parent entry
+        const data = { name: body.other, slug, module: 'Category' };
+        req.body.module = 'Category';
+        const createdEntry = await CmsHelper.create(
+          { body: data },
+          this.categoryModel,
+        );
 
         if (Array.isArray(req.body.name)) {
-            const createdEntries = await Promise.all(
-                req.body.name.map(async (name) => {
+          const createdEntries = await Promise.all(
+            req.body.name.map(async (name) => {
+              let slug = generateSlug(name);
+              slug = await ensureUniqueSlug(slug, this.categoryModel);
 
-                    let slug = generateSlug(name);
-                    slug = await ensureUniqueSlug(slug, this.categoryModel);
+              const childData = {
+                ...req.body,
+                type: createdEntry?.slug,
+                name,
+                slug,
+                parent: createdEntry._id,
+              };
 
-                    const data = { ...req.body, name, slug };
-                    req.body.module = "Category";
+              // Create child entry
+              const created = await CmsHelper.create(
+                { body: childData },
+                this.categoryModel,
+              );
+              createdEntry.children.push(created._id);
 
-                    const createdEntry = await CmsHelper.create({ body: data }, this.categoryModel);
-                    if (req.body.parent) {
-                        await this.categoryModel.updateMany(
-                            { _id: req.body.parent },
-                            { $push: { children: createdEntry._id } }
-                        );
-                    }
+              return created;
+            }),
+          );
 
-                    return createdEntry;
-                })
-            );
+          // Save the parent entry with updated children
+          await createdEntry.save();
 
-
-            return createdEntries; // Return all created entries
-        } else {
-            // Handle cases where `name` is not an array
-            return await CmsHelper.create(req, this.categoryModel);
+          return createdEntries; // Return all created entries
         }
+
+        await createdEntry.save();
+
+        return createdEntry; // Return the created parent entry
+      } catch (error) {
+        console.error('Error creating entry:', error);
+        throw new Error('Failed to create entry');
+      }
+    } else {
+      if (Array.isArray(body.name)) {
+        const createdEntries = await Promise.all(
+          body.name.map(async (name) => {
+            let slug = generateSlug(name);
+            slug = await ensureUniqueSlug(slug, this.categoryModel);
+
+            const data = { ...body, name, slug };
+            body.module = 'Category';
+
+            const createdEntry = await CmsHelper.create(
+              { body: data },
+              this.categoryModel,
+            );
+            if (body.parent) {
+              await this.categoryModel.updateOne(
+                { _id: body.parent },
+                { $push: { children: createdEntry._id } },
+              );
+            }
+
+            return createdEntry;
+          }),
+        );
+
+        return createdEntries; // Return all created entries
+      }
     }
 
+    // Handle the case when body.other is not provided
+  }
 
-    async multiDelete(req, query?) {
-        const data = await CmsHelper.multiDelete(req, this.categoryModel);
-        return data;
-    }
+  async multiDelete(req, query?) {
+    const data = await CmsHelper.multiDelete(req, this.categoryModel);
+    return data;
+  }
 
+  async search(req, query?) {
+    return await CmsHelper.search(req, this.categoryModel);
+  }
 
-    async search(req, query?) {
-        return await CmsHelper.search(req, this.categoryModel);
-    }
+  async findAll(req, query?) {
+    const result = await this.categoryModel
+      .find(query)
+      .populate('children')
+      .exec();
 
+    return result;
+  }
 }

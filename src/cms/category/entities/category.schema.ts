@@ -3,7 +3,6 @@ import { Document, Schema as MongooseSchema } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Category extends Document {
-
   @Prop({ required: true })
   name: string;
 
@@ -13,14 +12,14 @@ export class Category extends Document {
   @Prop({ default: null })
   type: string;
 
-  @Prop({ default: "kg" })
+  @Prop({ default: 'kg' })
   unit_type: string;
 
   @Prop({ required: true, default: null })
   slug: string;
 
   @Prop({ default: 0 })
-  price: number
+  price: number;
 
   @Prop({ default: null })
   description: string;
@@ -28,15 +27,18 @@ export class Category extends Document {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'File' })
   featured_image: File;
 
-  @Prop({ type: [MongooseSchema.Types.ObjectId], ref: 'Catgory' })
+  @Prop({ type: [MongooseSchema.Types.ObjectId], ref: 'Category' }) // Corrected
   children: MongooseSchema.Types.ObjectId[];
-
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Catgory', default: null })
+  
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Category', default: null }) // Corrected
   parent: MongooseSchema.Types.ObjectId;
+  
 
   @Prop()
   currency: string;
-  
+
+  @Prop({ default: null, type: Date })
+  delete_at: Date;
 }
 
 export const CatgorySchema = SchemaFactory.createForClass(Category);
@@ -44,11 +46,13 @@ export const CatgorySchema = SchemaFactory.createForClass(Category);
 // Populate 'featured_image' before 'find' and 'findOne' queries
 CatgorySchema.pre('find', function (next) {
   this.populate('featured_image');
+  this.populate('children');
   next();
 });
 
 // Ensure populate works for `findOne` queries too
 CatgorySchema.pre('findOne', function (next) {
   this.populate('featured_image');
+  this.populate('children');
   next();
 });

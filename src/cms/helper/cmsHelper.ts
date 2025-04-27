@@ -9,9 +9,8 @@ import { ensureUniqueSlug, generateSlug } from './slugHelper';
 // import { ImageUploadHelper } from './fileUploadHelper';
 import { ImageUploadHelper } from './CloudinaryHelper';
 
-
 export class CmsHelper {
-  constructor() { }
+  constructor() {}
 
   static async findOne(req, model) {
     const query: any = {};
@@ -25,10 +24,7 @@ export class CmsHelper {
     return model.findOne(query);
   }
 
-
-
   static async findByType(type, req, model) {
-
     return model.findOne({ [type]: req.body[type] });
   }
 
@@ -38,7 +34,7 @@ export class CmsHelper {
   //     const data = req.body;
   //     console.log('data', data);
 
-  //     const name = data.name || data.title; 
+  //     const name = data.name || data.title;
   //     if (!name) {
   //       throw new Error('Name or title is required to generate a slug');
   //     }
@@ -74,22 +70,18 @@ export class CmsHelper {
   //   }
   // }
 
-
   static async create(req, model, fileModel?) {
     try {
       const data = req.body;
 
-      if (data?.city == "" || data?.city == null) {
+      if (data?.city == '' || data?.city == null) {
         data.city = null;
-
       }
-      if (data?.country == "" || data?.country == null) {
+      if (data?.country == '' || data?.country == null) {
         data.country = null;
-
       }
-      if (data?.state == "" || data?.state == null) {
+      if (data?.state == '' || data?.state == null) {
         data.state = null;
-
       }
 
       const name = data.name || data.title;
@@ -103,21 +95,16 @@ export class CmsHelper {
         data.featured_image = uploadedImages;
       }
 
-
       if (req?.files?.gallery && req?.files?.gallery?.length > 0) {
-
         const uploadedImages = await ImageUploadHelper(req, fileModel);
 
         data.gallery = uploadedImages;
-
       }
 
       if (req?.files?.featured_image && req?.files?.featured_image > 0) {
-
         const uploadedImages = await ImageUploadHelper(req, fileModel);
 
         data.featured_image = uploadedImages;
-
       }
 
       if (req?.files?.slider && req?.files?.slider.length > 0) {
@@ -130,7 +117,6 @@ export class CmsHelper {
         }));
 
         data.slider = sliderData;
-
       }
 
       const slug = generateSlug(name);
@@ -149,33 +135,28 @@ export class CmsHelper {
     }
   }
 
-
   // Update an entry
   static async update(req, model, fileModel?) {
     try {
       const { id } = req.params;
       const data = req.body;
 
-
       if (!mongoose.Types.ObjectId.isValid(id)) {
         throw new Error('Invalid ID');
       }
-      if (data?.children == "" || data?.children == null) {
+      if (data?.children == '' || data?.children == null) {
         data.children = [];
-
       }
 
-      if (data?.featured_image && typeof data?.featured_image === "string") {
+      if (data?.featured_image && typeof data?.featured_image === 'string') {
         data.featured_image = JSON.parse(data.featured_image);
       }
-
 
       if (req?.file) {
         const uploadedImages = await ImageUploadHelper(req, fileModel);
 
         data.featured_image = uploadedImages;
       }
-
 
       if (req?.files?.slider && req?.files?.slider.length > 0) {
         try {
@@ -189,9 +170,8 @@ export class CmsHelper {
             details: data.slider[index]?.details || '', // Details from the client
           }));
 
-
           // Merge with existing slider data
-          data.slider = sliderData
+          data.slider = sliderData;
         } catch (error) {
           console.error('Error uploading images:', error);
           // Handle upload errors appropriately
@@ -205,7 +185,9 @@ export class CmsHelper {
             return JSON.parse(sliderString); // Parse JSON string
           });
 
-          data.slider = data.slider ? [...data.slider, ...existingSliders] : existingSliders;
+          data.slider = data.slider
+            ? [...data.slider, ...existingSliders]
+            : existingSliders;
         } catch (error) {
           console.error('Failed to parse exist_slider:', error);
         }
@@ -217,12 +199,11 @@ export class CmsHelper {
           const uploadedImages = await ImageUploadHelper(req, fileModel);
 
           // Merge with existing gallery data
-          data.gallery = uploadedImages
+          data.gallery = uploadedImages;
         } catch (error) {
           console.error('Error uploading GAllery:', error);
         }
       }
-
 
       // Handle existing gallerys
       if (data?.exist_gallery && data?.exist_gallery.length > 0) {
@@ -232,7 +213,9 @@ export class CmsHelper {
             return JSON.parse(galleryString); // Parse JSON string
           });
 
-          data.gallery = data.gallery ? [...data.gallery, ...existingGallery] : existingGallery;
+          data.gallery = data.gallery
+            ? [...data.gallery, ...existingGallery]
+            : existingGallery;
         } catch (error) {
           console.error('Failed to parse exist_gallery:', error);
         }
@@ -240,7 +223,7 @@ export class CmsHelper {
 
       // Continue with your logic (e.g., save to database)
 
-      console.log("-=-==-=-=data=-=-=", data);
+      console.log('-=-==-=-=data=-=-=', data);
 
       const updatedEntry = await model.findByIdAndUpdate({ _id: id }, data, {
         new: true,
@@ -317,7 +300,6 @@ export class CmsHelper {
   //MultiDelete
   static async multiDelete(req, model) {
     const ids = req.body.ids;
-
 
     const data = await model.deleteMany({ _id: { $in: ids } });
     return data;
