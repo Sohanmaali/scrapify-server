@@ -1,0 +1,13 @@
+{
+  "watch": ["src"],
+  "ext": "ts",
+  "ignore": [
+    "src/**/*.spec.ts",
+    "node_modules/**",
+    "dist/**",
+    ".git/**",
+    "*.log"
+  ],
+  "exec": "ts-node --transpile-only src/main.ts",
+  "restartable": "rs"
+}

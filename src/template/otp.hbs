@@ -1,0 +1,71 @@
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Account Verification Request</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 0; padding: 0;
+      background-color: #f4f4f4; } .email-container { max-width: 600px; margin:
+      20px auto; background: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px
+      rgba(0, 0, 0, 0.1); overflow: hidden; } .header {  background-color: #ffffff; /* White background */
+      color: #282828;
+      text-align: center;
+      padding: 20px;
+      border-bottom: 3px solid #309255; } .header h1 {
+      margin: 0; font-size: 24px; } .otp { display: flex; justify-content:
+      center; } .inner-otp { font-size: 25px; font-weight: bold; width: 40%;
+      align-items: center; color: #333; text-align: center; background-color:
+      #e7f8ee; border: 2px dashed green; border-radius: 8px; padding: } .content {
+      padding: 20px; /* padding: 0 20px 0 20px; */ color: #333333; line-height:
+      1.6; } .content h2 { color: #309255; /* margin-bottom: 10px; */
+      margin-top: 0; } .email-footer { text-align: center; font-size: 14px;
+      color: #777; /* margin-top: 10px; */ } .footer { background-color:
+      #212832; color: #fff; text-align: center; padding: 10px 20px; font-size:
+      14px; } .footer a { color: #309255; text-decoration: none; }
+      .heading{
+        margin-bottom: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class='email-container'>
+      <!-- Header -->
+     
+      <div class="header">
+        <img src="https://via.placeholder.com/100x50.png?text=Your+Logo" alt="Website Logo" />
+      </div>
+      <!-- Content -->
+      <div class='content'>
+        <h2 class="heading">OTP Verification Code</h2>
+        <h3>Hello {{data.name}},</h3>
+        <p>
+          We received a request to verify your account. Please use the OTP below
+          to proceed with the verification:
+        </p>
+        <div class='otp'>
+          <div class='inner-otp'>{{data.otp}}</div>
+        </div>
+
+        <p>
+          This code will expire in 60 seconds. If you did not request this
+          verification, please ignore this email.
+        </p>
+      </div>
+
+      <div class='email-footer'>
+        <p>Thank you for using {{data.AppName}}</p>
+      </div>
+
+      <!-- Footer -->
+      <div class='footer'>
+        <p>&copy; {{data.Year}} {{data.AppName}} All rights reserved.</p>
+        <p>
+          Visit our website:
+          <a href='{{data.AppUrl}}'>{{AppUrl}}</a>
+          | Contact us:
+          <a href='{{data.AdminEmail}}'>{{data.AdminEmail}}</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,118 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Details</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .email-container {
+        max-width: 600px;
+        margin: 20px auto;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .header {
+        background-color: #309255;
+        color: #ffffff;
+        text-align: center;
+        padding: 20px;
+        position: relative;
+      }
+      .header img {
+        max-width: 100px;
+        margin-bottom: 10px;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+      .content {
+        padding: 20px;
+        color: #333333;
+        line-height: 1.6;
+      }
+      .content h2 {
+        color: #309255;
+        margin-top: 0;
+        margin-bottom: 10px;
+      }
+      .content p {
+        margin: 5px 0;
+      }
+      .contact-details {
+        background-color: #f9f9f9;
+        padding: 10px 20px;
+        margin: 5px 0;
+        border-radius: 8px;
+        line-height: 1.8;
+        color: #333;
+      }
+      .contact-details p {
+        margin: 5px 0;
+        font-size: 15px;
+      }
+      .contact-details strong {
+        color: #309255;
+      }
+      .email-footer {
+        text-align: center;
+        font-size: 14px;
+        color: #777;
+        margin-top: 20px;
+      }
+      .footer {
+        background-color: #212832;
+        color: #fff;
+        text-align: center;
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+      .footer a {
+        color: #309255;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <!-- Header -->
+      <div class="header">
+        <img src="https://via.placeholder.com/100x50.png?text=Your+Logo" alt="Website Logo" />
+      </div>
+
+      <!-- Content -->
+      <div class="content">
+        <h2>New Inquiry Received,</h2>
+        <p>
+          A new contact inquiry from {{data.name}} has been received. Kindly check the details and proceed with the required actions.
+        </p>
+      </div>
+
+      <!-- Contact Details -->
+      <div class="contact-details">
+         <p><strong>Name:</strong>{{data.name}}</p>
+        <p><strong>Email:</strong> <a href="{{data.email}}">{{data.email}}</a></p>
+        <p><strong>Phone:</strong> {{data.mobile}}</p>
+        <p><strong>Message:</strong> {{data.message}}</p>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p>&copy; {{data.year}} {{data.AppName}}. All rights reserved.</p>
+        <p>
+          Visit our website:
+          <a href="{{data.AppUrl}}">{{data.AppUrl}}</a>
+          | Contact us:
+          <a href="{{data.AdminEmail}}">{{data.AdminEmail}}</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
