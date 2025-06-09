@@ -26,6 +26,8 @@ async function bootstrap() {
       "https://scrapify-server-i1ge.onrender.com",
       "https://scrapify-livb.onrender.com",
       "https://scrapify-admin-1.onrender.com",
+      "https://scrapify-client-alpha.vercel.app/",
+            "https://scrapify-client-alpha.vercel.app",
       'http://localhost:3003',
       'http://localhost:3005',
       'http://localhost:3000',
