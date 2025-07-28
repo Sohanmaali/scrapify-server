@@ -33,7 +33,7 @@ import { ContactModule } from './cms/contact/contact.module';
     EcommerceModule,
     DashboardModule,
     SliderModule,
-    ContactModule,
+        ContactModule,
   ],
   controllers: [AppController],
   providers: [AppService],

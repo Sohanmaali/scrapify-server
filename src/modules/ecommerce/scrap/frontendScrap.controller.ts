@@ -89,6 +89,7 @@ x
       if (!req?.auth?._id) {
         return res.status(500).json(ResponseHelper.unauthorized("error", "500", "please login"));
       }
+      
 
       const query: any = { delete_at: null, customer: new mongoose.Types.ObjectId(req?.auth?._id) };
 
